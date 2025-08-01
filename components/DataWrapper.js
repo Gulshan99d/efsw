@@ -4,7 +4,7 @@ import { useIsLoggedIn } from "../hooks/useLoggedIn";
 import * as SecureStore from "expo-secure-store";
 
 const DataWrapper = ({ children }) => {
-  const isLogedIn = useIsLoggedIn();
+  const [accessToken, isLoggedIn] = useIsLoggedIn();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -34,14 +34,14 @@ const DataWrapper = ({ children }) => {
   };
 
   const fetchUserData = useCallback(async () => {
-    if (!isLogedIn) return;
+    if (!isLoggedIn) return;
     try {
       const token = await getAccessToken();
       if (!token) {
         console.error("No access token found");
         return;
       }
-      const res = await fetch("http://192.168.1.23:3000/api/user/getUser", {
+      const res = await fetch("http://192.168.1.22:3000/api/user/getUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,20 +50,22 @@ const DataWrapper = ({ children }) => {
         body: JSON.stringify({}),
       });
       const data = await res.json();
+      console.log("✅ user fetch successfull");
       setUser(data.user);
     } catch (err) {
       console.error("User fetch failed:", err);
     }
-  }, [isLogedIn]);
+  }, [isLoggedIn]);
 
   const fetchProducts = useCallback(async () => {
     try {
       const headers = { "Content-Type": "application/json" };
-      const res = await fetch("http://192.168.1.23:3000/api/user/getProducts", {
+      const res = await fetch("http://192.168.1.22:3000/api/user/getProducts", {
         method: "GET",
         headers,
       });
       const data = await res.json();
+      console.log("✅ Product fetch successfull");
       setProducts(data.products || []);
     } catch (err) {
       console.error("Products fetch failed:", err);
@@ -79,11 +81,15 @@ const DataWrapper = ({ children }) => {
             Authorization: `Bearer ${token}`,
           }
         : { "Content-Type": "application/json" };
-      const res = await fetch("http://192.168.1.23:3000/api/user/getCategories", {
-        method: "GET",
-        headers,
-      });
+      const res = await fetch(
+        "http://192.168.1.22:3000/api/user/getCategories",
+        {
+          method: "GET",
+          headers,
+        }
+      );
       const data = await res.json();
+      console.log("✅ Category fetch successfull");
       setCategories(data.categories || []);
     } catch (err) {
       console.error("Categories fetch failed:", err);
@@ -99,12 +105,12 @@ const DataWrapper = ({ children }) => {
   }, [fetchCategories]);
 
   useEffect(() => {
-    if (!isLogedIn || (products && (user || !isLogedIn))) {
+    if (!isLoggedIn || (products && (user || !isLoggedIn))) {
       setIsLoading(false);
     } else {
       setIsLoading(true);
     }
-  }, [products, user, isLogedIn]);
+  }, [products, user, isLoggedIn]);
 
   return (
     <DataContext.Provider

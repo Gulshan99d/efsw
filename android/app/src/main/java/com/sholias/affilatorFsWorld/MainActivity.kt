@@ -1,4 +1,4 @@
-package com.anonymous.affilatorFsWorld
+package com.sholias.affilatorFsWorld
 
 import android.os.Build
 import android.os.Bundle

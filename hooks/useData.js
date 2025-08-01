@@ -2,4 +2,6 @@
 import { useContext } from 'react';
 import { DataContext } from '../components/DataContext';
 
-export const useData = () => useContext(DataContext);
+const useData = () => useContext(DataContext);
+
+export default useData;

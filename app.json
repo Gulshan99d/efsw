@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "affilatorFsWorld",
-    "slug": "affilatorfsworld",
+    "name": "FashionWorld",
+    "slug": "fsworld",
     "scheme": "affilatorfsworld",
     "deepLinking": true,
     "version": "1.0.0",
@@ -9,14 +9,15 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-     "owner": "sholias",
+    "owner": "sholias",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fashionworld.ecom"
     },
     "android": {
       "intentFilters": [
@@ -26,10 +27,7 @@
             "scheme": "https",
             "host": "fashionworld.com"
           },
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "adaptiveIcon": {
@@ -37,15 +35,14 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.sholias.affilatorFsWorld"
+      "package": "com.fashionworld.ecom"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-secure-store"
-    ],
+    "plugins": ["expo-secure-store"],
     "extra": {
+      "expoClientId": "286065569518-p703c2v38bs9m5fq7f5sc51v1td197tq.apps.googleusercontent.com",
       "eas": {
         "projectId": "7bb19a5c-c58a-4364-a2fb-362d783c5b69"
       }

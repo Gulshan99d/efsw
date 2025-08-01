@@ -16,15 +16,12 @@ export default function MainNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isLoggedIn ? (
           <Stack.Screen name="Home">
             {(props) => <HomeScreen {...props} />}
           </Stack.Screen>
-        ) : (
           <Stack.Screen name="Login">
             {(props) => <LoginScreen {...props} />}
           </Stack.Screen>
-        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
