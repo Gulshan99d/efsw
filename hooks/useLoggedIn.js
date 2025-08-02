@@ -30,7 +30,7 @@ export const useIsLoggedIn = () => {
 
       try {
         const res = await fetch(
-          "http://192.168.1.22:3000/api/user/login/verify",
+          "http://192.168.1.8:3000/api/user/login/verify",
           {
             method: "POST",
             headers: { Authorization: `Bearer ${acessToken.token}` },

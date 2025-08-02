@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
+  Pressable,
   TouchableOpacity,
   FlatList,
   Image,
@@ -16,10 +16,12 @@ import useData from "../../hooks/useData";
 import BottomNav from "../../components/BottomNav";
 import { useIsLoggedIn } from "../../hooks/useLoggedIn";
 import { SafeAreaView } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
 const App = () => {
   const { categories, products } = useData();
-  const [accessToken, isLoggedIn] = useIsLoggedIn();
+  // const [accessToken, isLoggedIn] = useIsLoggedIn();
+  const navigation = useNavigation();
 
   // const setTemp = async () => {
   //   try {
@@ -41,25 +43,26 @@ const App = () => {
 
   // useEffect(() => {}, []);
 
-const categoryImage = {
-  "Mens Wear": require('../../assets/homeImages/mensCat.avif'),
-  "Womens Wear": require('../../assets/homeImages/womensCat.png'),
-  "Kids": require('../../assets/homeImages/kidsCat.jpg'),
-};
+  const categoryImage = {
+    "Mens Wear": require("../../assets/homeImages/mensCat.avif"),
+    "Womens Wear": require("../../assets/homeImages/womensCat.png"),
+    Kids: require("../../assets/homeImages/kidsCat.jpg"),
+  };
   const renderCategory = ({ item }) => (
     <View style={styles.categoryItem}>
       <View style={styles.categoryImage}>
-        <Image
-          source={categoryImage[item.name]}
-          style={styles.categoryImage}
-        />
+        <Image source={categoryImage[item.name]} style={styles.categoryImage} />
       </View>
       <Text style={styles.categoryText}>{item.name}</Text>
     </View>
   );
 
   const renderProduct = ({ item }) => (
-    <View style={styles.productCard}>
+    <Pressable
+      key={item.__id}
+      onPress={() => navigation.navigate("Details", { productId: item._id, affilatorId: "" })}
+      style={styles.productCard}
+    >
       <View style={styles.productImageContainer}>
         <Image
           source={{
@@ -113,7 +116,7 @@ const categoryImage = {
           <Text style={styles.deliveryText}>Free Delivery</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 
   const sections = [

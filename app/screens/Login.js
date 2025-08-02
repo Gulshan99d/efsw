@@ -8,7 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-toast-message";
 import { makeRedirectUri } from "expo-auth-session";
 
-const BACKEND_LOGIN_URL = "http://192.168.1.22:3000/api/user/login";
+const BACKEND_LOGIN_URL = "http://192.168.1.8:3000/api/user/login";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -107,10 +107,10 @@ export default function LoginScreen({ navigation }) {
   // });
 
   useEffect(() => {
-      // console.log("Google Auth Response:", response);
-      const authentication  =
-        "ya29.a0AS3H6NxNa6SAx6paRn5WfJ8CNPMloLq-7-uBVpoa5Sewl4f6y3gaRWANaQ9K_GYPIP_crqA8wBnCJz3TNazinYRYyI1Sg1dH4uAFwOIeT7ihV_owVweXMIoBVI-0GoKYN6jfTxDHFSjij3ywnktCSIp5-i1YBe8LGm6b_U3ivgaCgYKAboSARcSFQHGX2MiNEAxnqJ4Fg0kKslGUXwbQg0177";
-      handleBackendLogin(authentication)
+      // // console.log("Google Auth Response:", response);
+      // const authentication  =
+      //   "ya29.a0AS3H6NxNa6SAx6paRn5WfJ8CNPMloLq-7-uBVpoa5Sewl4f6y3gaRWANaQ9K_GYPIP_crqA8wBnCJz3TNazinYRYyI1Sg1dH4uAFwOIeT7ihV_owVweXMIoBVI-0GoKYN6jfTxDHFSjij3ywnktCSIp5-i1YBe8LGm6b_U3ivgaCgYKAboSARcSFQHGX2MiNEAxnqJ4Fg0kKslGUXwbQg0177";
+      // handleBackendLogin(authentication)
   }, []);
 
   const handleBackendLogin = async (googleAcessToken) => {

@@ -41,7 +41,7 @@ const DataWrapper = ({ children }) => {
         console.error("No access token found");
         return;
       }
-      const res = await fetch("http://192.168.1.22:3000/api/user/getUser", {
+      const res = await fetch("http://192.168.1.8:3000/api/user/getUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +60,7 @@ const DataWrapper = ({ children }) => {
   const fetchProducts = useCallback(async () => {
     try {
       const headers = { "Content-Type": "application/json" };
-      const res = await fetch("http://192.168.1.22:3000/api/user/getProducts", {
+      const res = await fetch("http://192.168.1.8:3000/api/user/getProducts", {
         method: "GET",
         headers,
       });
@@ -82,12 +82,13 @@ const DataWrapper = ({ children }) => {
           }
         : { "Content-Type": "application/json" };
       const res = await fetch(
-        "http://192.168.1.22:3000/api/user/getCategories",
+        "http://192.168.1.8:3000/api/user/getCategories",
         {
           method: "GET",
           headers,
         }
       );
+      // http://192.168.1.8:3000
       const data = await res.json();
       console.log("✅ Category fetch successfull");
       setCategories(data.categories || []);
