@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,36 +7,35 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-} from "react-native";
-import Swiper from "react-native-swiper";
-import Animated, { FadeInUp } from "react-native-reanimated";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import RenderHtml from "react-native-render-html";
-import Svg, { Path } from "react-native-svg";
-import useData from "../../hooks/useData";
+} from 'react-native';
+import Swiper from 'react-native-swiper';
+import { Animated } from 'react-native'; // Use Animated from react-native
+import RenderHtml from 'react-native-render-html';
+import Svg, { Path } from 'react-native-svg';
+import useData from '../../hooks/useData';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
-const DetailScreen = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
-  const { productId, affilatorId } = route.params || {};
+const DetailScreen = ({ route,navigation }) => {
+  const productId = route?.params?.productId ?? 'E7F8A9B0';
+  const affilatorId = route?.params?.affilatorId ?? '';
   const { products } = useData();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  
+  const [currentVariant, setCurrentVariant] = useState('main');
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [currentVariant, setCurrentVariant] = useState("main");
+  const slideAnim = useRef(new Animated.Value(100)).current; // Define slideAnim
   const swiperRef = useRef(null);
 
-  const product = products.find((p) => p._id === productId) || {};
+  const product = products?.find(p => p._id === productId) || {};
   const currentImages = Array.isArray(product.images?.[currentVariant])
     ? product.images[currentVariant]
     : [];
   const recommendedProducts = products
-    .filter((p) => p.category === product.category && p._id !== productId)
-    .slice(0, 4);
+    ?.filter(p => p.category === product.category && p._id !== productId)
+    .slice(0, 4) || [];
 
   useEffect(() => {
     Animated.parallel([
@@ -51,24 +50,24 @@ const DetailScreen = () => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
-  const handleQuantityChange = (action) => {
-    if (action === "increase" && quantity < 10) {
+  const handleQuantityChange = action => {
+    if (action === 'increase' && quantity < 10) {
       setQuantity(quantity + 1);
-    } else if (action === "decrease" && quantity > 1) {
+    } else if (action === 'decrease' && quantity > 1) {
       setQuantity(quantity - 1);
     }
   };
 
-  const handleThumbnailClick = (index) => {
+  const handleThumbnailClick = index => {
     setSelectedImageIndex(index);
     if (swiperRef.current) {
       swiperRef.current.scrollTo(index);
     }
   };
 
-  const handleVariantChange = (variant) => {
+  const handleVariantChange = variant => {
     setCurrentVariant(variant);
     setSelectedImageIndex(0);
     if (swiperRef.current) {
@@ -80,21 +79,19 @@ const DetailScreen = () => {
     const recImage =
       Array.isArray(item.images?.main) && item.images.main.length > 0
         ? item.images.main[0]
-        : "https://via.placeholder.com/150";
+        : 'https://via.placeholder.com/150';
     return (
       <TouchableOpacity
         style={styles.recommendationCard}
-        onPress={() =>
-          navigation.navigate("DetailScreen", { productId: item._id })
-        }
+        onPress={() => navigation.navigate('DetailScreen', { productId: item._id })}
       >
         <Image source={{ uri: recImage }} style={styles.recommendationImage} />
         <View style={styles.recommendationCardContent}>
           <Text style={styles.recommendationTitle}>
-            {item.title || "Recommended Product"}
+            {item.title || 'Recommended Product'}
           </Text>
           <Text style={styles.recommendationPrice}>
-            ₹{item.currentPrice || "4,999"}
+            ₹{item.currentPrice || '4,999'}
           </Text>
         </View>
       </TouchableOpacity>
@@ -104,7 +101,9 @@ const DetailScreen = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={[{ key: "product-details" }]}
+        data={
+          product
+        }
         renderItem={() => (
           <Animated.View
             style={[
@@ -112,10 +111,7 @@ const DetailScreen = () => {
               { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
             ]}
           >
-            {console.log(
-              "Rendering product details for:",
-              product.title || "Unknown Product"
-            )}
+            {console.log('Rendering product details for:', product.title || 'Unknown Product')}
             {/* Image Gallery */}
             <View style={styles.productGallery}>
               {currentImages.length > 0 ? (
@@ -127,14 +123,12 @@ const DetailScreen = () => {
                   paginationStyle={styles.pagination}
                   dotColor="#e5e7eb"
                   activeDotColor="#73D5E8"
-                  onIndexChanged={(index) => setSelectedImageIndex(index)}
+                  onIndexChanged={index => setSelectedImageIndex(index)}
                 >
                   {currentImages.map((img, index) => (
                     <View key={index} style={styles.gallerySlide}>
                       <Image
-                        source={{
-                          uri: img || "https://via.placeholder.com/600x540",
-                        }}
+                        source={{ uri: img || 'https://via.placeholder.com/600x540' }}
                         style={styles.galleryImage}
                       />
                     </View>
@@ -156,7 +150,7 @@ const DetailScreen = () => {
                     onPress={() => handleThumbnailClick(index)}
                   >
                     <Image
-                      source={{ uri: img || "https://via.placeholder.com/100" }}
+                      source={{ uri: img || 'https://via.placeholder.com/100' }}
                       style={styles.thumbnailImage}
                     />
                   </TouchableOpacity>
@@ -168,20 +162,20 @@ const DetailScreen = () => {
             <View style={styles.productInfo}>
               <Text style={styles.productBrand}>TFW</Text>
               <Text style={styles.productTitle}>
-                {product.title || "Premium Silk Saree"}
+                {product.title || 'Premium Silk Saree'}
               </Text>
               <View style={styles.productPrice}>
                 <Text style={styles.priceCurrent}>
-                  ₹{product.currentPrice || "5,999"}
+                  ₹{product.currentPrice || '5,999'}
                 </Text>
                 <Text style={styles.priceOriginal}>
-                  ₹{product.oldPrice || "7,999"}
+                  ₹{product.oldPrice || '7,999'}
                 </Text>
               </View>
 
               {/* Color Variants */}
               <View style={styles.colorVariants}>
-                {Object.keys(product.images || {}).map((key) => (
+                {Object.keys(product.images || {}).map(key => (
                   <TouchableOpacity
                     key={key}
                     style={[
@@ -192,9 +186,7 @@ const DetailScreen = () => {
                   >
                     <Image
                       source={{
-                        uri:
-                          product.images[key][0] ||
-                          "https://via.placeholder.com/80",
+                        uri: product.images[key][0] || 'https://via.placeholder.com/80',
                       }}
                       style={styles.colorOptionImage}
                     />
@@ -206,7 +198,7 @@ const DetailScreen = () => {
               <View style={styles.sizeSelector}>
                 <Text style={styles.sizeLabel}>Select Size</Text>
                 <View style={styles.sizeOptions}>
-                  {["S", "M", "L"].map((size) => (
+                  {(product.sizes || ['S', 'M', 'L']).map(size => (
                     <TouchableOpacity
                       key={size}
                       style={[
@@ -218,8 +210,7 @@ const DetailScreen = () => {
                       <Text
                         style={[
                           styles.sizeOptionText,
-                          selectedSize === size &&
-                            styles.sizeOptionTextSelected,
+                          selectedSize === size && styles.sizeOptionTextSelected,
                         ]}
                       >
                         {size}
@@ -238,14 +229,14 @@ const DetailScreen = () => {
                 <View style={styles.quantityControls}>
                   <TouchableOpacity
                     style={styles.quantityBtn}
-                    onPress={() => handleQuantityChange("decrease")}
+                    onPress={() => handleQuantityChange('decrease')}
                   >
                     <Text style={styles.quantityBtnText}>-</Text>
                   </TouchableOpacity>
                   <Text style={styles.quantityInput}>{quantity}</Text>
                   <TouchableOpacity
                     style={styles.quantityBtn}
-                    onPress={() => handleQuantityChange("increase")}
+                    onPress={() => handleQuantityChange('increase')}
                   >
                     <Text style={styles.quantityBtnText}>+</Text>
                   </TouchableOpacity>
@@ -314,49 +305,18 @@ const DetailScreen = () => {
                 <Text style={styles.descriptionTitle}>Description</Text>
                 <RenderHtml
                   contentWidth={width - 64}
-                  source={{
-                    html: product.description || "No description available.",
-                  }}
+                  source={{ html: product.description || 'No description available.' }}
                   baseStyle={styles.descriptionText}
                   tagsStyles={{
-                    h2: {
-                      fontSize: 18,
-                      fontWeight: "bold",
-                      color: "#111827",
-                      marginVertical: 8,
-                    },
-                    h3: {
-                      fontSize: 16,
-                      fontWeight: "600",
-                      color: "#111827",
-                      marginVertical: 8,
-                    },
-                    p: {
-                      fontSize: 14,
-                      color: "#374151",
-                      lineHeight: 22,
-                      marginVertical: 4,
-                    },
+                    h2: { fontSize: 18, fontWeight: 'bold', color: '#111827', marginVertical: 8 },
+                    h3: { fontSize: 16, fontWeight: '600', color: '#111827', marginVertical: 8 },
+                    p: { fontSize: 14, color: '#374151', lineHeight: 22, marginVertical: 4 },
                     ul: { marginLeft: 16, paddingLeft: 16 },
                     ol: { marginLeft: 16, paddingLeft: 16 },
-                    li: { fontSize: 14, color: "#374151", marginBottom: 4 },
-                    table: {
-                      borderWidth: 1,
-                      borderColor: "#e5e7eb",
-                      marginVertical: 8,
-                    },
-                    th: {
-                      backgroundColor: "#f3f4f6",
-                      padding: 8,
-                      fontWeight: "600",
-                      color: "#111827",
-                    },
-                    td: {
-                      borderWidth: 1,
-                      borderColor: "#e5e7eb",
-                      padding: 8,
-                      color: "#374151",
-                    },
+                    li: { fontSize: 14, color: '#374151', marginBottom: 4 },
+                    table: { borderWidth: 1, borderColor: '#e5e7eb', marginVertical: 8 },
+                    th: { backgroundColor: '#f3f4f6', padding: 8, fontWeight: '600', color: '#111827' },
+                    td: { borderWidth: 1, borderColor: '#e5e7eb', padding: 8, color: '#374151' },
                   }}
                 />
               </View>
@@ -366,20 +326,12 @@ const DetailScreen = () => {
                 <Text style={styles.sizeChartTitle}>Size Chart</Text>
                 <View style={styles.sizeChartTable}>
                   <View style={styles.tableRow}>
-                    <Text style={[styles.tableCell, styles.tableHeader]}>
-                      Size
-                    </Text>
-                    <Text style={[styles.tableCell, styles.tableHeader]}>
-                      Length (m)
-                    </Text>
-                    <Text style={[styles.tableCell, styles.tableHeader]}>
-                      Width (m)
-                    </Text>
-                    <Text style={[styles.tableCell, styles.tableHeader]}>
-                      Blouse Piece
-                    </Text>
+                    <Text style={[styles.tableCell, styles.tableHeader]}>Size</Text>
+                    <Text style={[styles.tableCell, styles.tableHeader]}>Length (m)</Text>
+                    <Text style={[styles.tableCell, styles.tableHeader]}>Width (m)</Text>
+                    <Text style={[styles.tableCell, styles.tableHeader]}>Blouse Piece</Text>
                   </View>
-                  {["S", "M", "L"].map((size) => (
+                  {(product.sizes || ['S', 'M', 'L']).map(size => (
                     <View key={size} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{size}</Text>
                       <Text style={styles.tableCell}>5.5</Text>
@@ -392,244 +344,239 @@ const DetailScreen = () => {
             </View>
           </Animated.View>
         )}
-        keyExtractor={(item) => item.key}
+        keyExtractor={item => item.key}
         contentContainerStyle={styles.main}
-        ListEmptyComponent={
-          <Text style={styles.errorText}>No product details available</Text>
-        }
+        ListEmptyComponent={<Text style={styles.errorText}>No product details available</Text>}
       />
 
       {/* Product Recommendations */}
-      <Animated.View
-        entering={FadeInUp.duration(500).delay(200)}
-        style={styles.productRecommendations}
-      >
+      <View style={styles.productRecommendations}>
         <Text style={styles.recommendationsTitle}>You May Also Like</Text>
         <FlatList
           data={recommendedProducts}
           renderItem={renderRecommendation}
-          keyExtractor={(item) => item._id}
+          keyExtractor={item => item._id}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.recommendationsGrid}
         />
-      </Animated.View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-    maxWidth: 360,
-    alignSelf: "center",
-  },
-  main: { padding: 16 },
-  productContainer: { flexDirection: "column", gap: 24 },
-  productGallery: { marginBottom: 24 },
-  galleryContainer: {
-    height: 540,
-    borderRadius: 16,
-    backgroundColor: "#ffffff",
-  },
-  gallerySlide: { flex: 1 },
-  galleryImage: { width: "100%", height: "100%", borderRadius: 16 },
-  pagination: { bottom: 10 },
-  galleryThumbnails: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 12,
-    marginTop: 16,
-  },
-  thumbnail: {
-    width: 100,
-    height: 100,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#e5e7eb",
-  },
-  thumbnailSelected: { borderColor: "#73D5E8" },
-  thumbnailImage: { width: "100%", height: "100%", borderRadius: 10 },
-  productInfo: { flexDirection: "column", gap: 16 },
-  productBrand: { fontSize: 14, color: "#6b7280", fontWeight: "500" },
-  productTitle: { fontSize: 24, fontWeight: "700", color: "#111827" },
-  productPrice: { flexDirection: "row", alignItems: "center", gap: 8 },
-  priceCurrent: { fontSize: 20, fontWeight: "700", color: "#73D5E8" },
-  priceOriginal: {
-    fontSize: 16,
-    color: "#9ca3af",
-    textDecorationLine: "line-through",
-  },
-  colorVariants: { flexDirection: "row", gap: 12, marginVertical: 16 },
-  colorOption: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#e5e7eb",
-  },
-  colorOptionSelected: { borderColor: "#73D5E8" },
-  colorOptionImage: { width: "100%", height: "100%", borderRadius: 10 },
-  sizeSelector: { flexDirection: "column", gap: 8, marginBottom: 16 },
-  sizeLabel: { fontSize: 14, fontWeight: "500", color: "#374151" },
-  sizeOptions: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  sizeOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 12,
-    backgroundColor: "#ffffff",
-  },
-  sizeOptionSelected: { borderColor: "#73D5E8", backgroundColor: "#73D5E8" },
-  sizeOptionText: { fontSize: 14, fontWeight: "500", color: "#374151" },
-  sizeOptionTextSelected: { color: "#ffffff" },
-  sizeChartBtn: {
-    borderWidth: 1,
-    borderColor: "#73D5E8",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginTop: 8,
-  },
-  sizeChartBtnText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#73D5E8",
-    textTransform: "uppercase",
-  },
-  quantitySelector: { flexDirection: "column", gap: 8, marginBottom: 16 },
-  quantityLabel: { fontSize: 14, fontWeight: "500", color: "#374151" },
-  quantityControls: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 10,
-    backgroundColor: "#ffffff",
-  },
-  quantityBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#f3f4f6",
-    borderRadius: 10,
-  },
-  quantityBtnText: { fontSize: 16, fontWeight: "600", color: "#111827" },
-  quantityInput: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#111827",
-    textAlign: "center",
-    width: 50,
-  },
-  actionButtons: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-    marginBottom: 16,
-  },
-  addToCart: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    padding: 12,
-    backgroundColor: "#111827",
-    borderRadius: 12,
-  },
-  buyNow: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    padding: 12,
-    backgroundColor: "#73D5E8",
-    borderRadius: 12,
-  },
-  shareBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    backgroundColor: "#8b5cf6",
-    borderRadius: 12,
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#ffffff",
-    textTransform: "uppercase",
-  },
-  productDescription: { marginVertical: 16 },
-  descriptionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 8,
-  },
-  descriptionText: { fontSize: 14, color: "#374151", lineHeight: 22 },
-  sizeChart: { marginVertical: 16 },
-  sizeChartTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 8,
-  },
-  sizeChartTable: {
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 12,
-    backgroundColor: "#ffffff",
-    overflow: "hidden",
-  },
-  tableRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  tableHeader: {
-    backgroundColor: "#f3f4f6",
-    fontWeight: "600",
-    color: "#111827",
-  },
-  tableCell: {
-    flex: 1,
-    padding: 8,
-    fontSize: 14,
-    color: "#374151",
-    textAlign: "left",
-  },
-  productRecommendations: { paddingVertical: 24, backgroundColor: "#f5f5f5" },
-  recommendationsTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#111827",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  recommendationsGrid: { paddingHorizontal: 16, gap: 16 },
-  recommendationCard: {
-    width: 150,
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    overflow: "hidden",
-    marginRight: 16,
-  },
-  recommendationImage: { width: "100%", height: 100 },
-  recommendationCardContent: { padding: 8 },
-  recommendationTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 4,
-  },
-  recommendationPrice: { fontSize: 14, fontWeight: "600", color: "#73D5E8" },
+	container: {
+		flex: 1,
+		backgroundColor: '#f5f5f5',
+		maxWidth: 360,
+		alignSelf: 'center',
+	},
+	main: { padding: 16 },
+	productContainer: { flexDirection: 'column', gap: 24 },
+	productGallery: { marginBottom: 24 },
+	galleryContainer: {
+		height: 540,
+		borderRadius: 16,
+		backgroundColor: '#ffffff',
+	},
+	gallerySlide: { flex: 1 },
+	galleryImage: { width: '100%', height: '100%', borderRadius: 16 },
+	pagination: { bottom: 10 },
+	galleryThumbnails: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		gap: 12,
+		marginTop: 16,
+	},
+	thumbnail: {
+		width: 100,
+		height: 100,
+		borderRadius: 12,
+		borderWidth: 2,
+		borderColor: '#e5e7eb',
+	},
+	thumbnailSelected: { borderColor: '#73D5E8' },
+	thumbnailImage: { width: '100%', height: '100%', borderRadius: 10 },
+	productInfo: { flexDirection: 'column', gap: 16 },
+	productBrand: { fontSize: 14, color: '#6b7280', fontWeight: '500' },
+	productTitle: { fontSize: 24, fontWeight: '700', color: '#111827' },
+	productPrice: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+	priceCurrent: { fontSize: 20, fontWeight: '700', color: '#73D5E8' },
+	priceOriginal: {
+		fontSize: 16,
+		color: '#9ca3af',
+		textDecorationLine: 'line-through',
+	},
+	colorVariants: { flexDirection: 'row', gap: 12, marginVertical: 16 },
+	colorOption: {
+		width: 80,
+		height: 80,
+		borderRadius: 12,
+		borderWidth: 2,
+		borderColor: '#e5e7eb',
+	},
+	colorOptionSelected: { borderColor: '#73D5E8' },
+	colorOptionImage: { width: '100%', height: '100%', borderRadius: 10 },
+	sizeSelector: { flexDirection: 'column', gap: 8, marginBottom: 16 },
+	sizeLabel: { fontSize: 14, fontWeight: '500', color: '#374151' },
+	sizeOptions: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+	sizeOption: {
+		paddingVertical: 8,
+		paddingHorizontal: 16,
+		borderWidth: 1,
+		borderColor: '#e5e7eb',
+		borderRadius: 12,
+		backgroundColor: '#ffffff',
+	},
+	sizeOptionSelected: { borderColor: '#73D5E8', backgroundColor: '#73D5E8' },
+	sizeOptionText: { fontSize: 14, fontWeight: '500', color: '#374151' },
+	sizeOptionTextSelected: { color: '#ffffff' },
+	sizeChartBtn: {
+		borderWidth: 1,
+		borderColor: '#73D5E8',
+		paddingVertical: 8,
+		paddingHorizontal: 16,
+		borderRadius: 12,
+		marginTop: 8,
+	},
+	sizeChartBtnText: {
+		fontSize: 14,
+		fontWeight: '600',
+		color: '#73D5E8',
+		textTransform: 'uppercase',
+	},
+	quantitySelector: { flexDirection: 'column', gap: 8, marginBottom: 16 },
+	quantityLabel: { fontSize: 14, fontWeight: '500', color: '#374151' },
+	quantityControls: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 16,
+		borderWidth: 1,
+		borderColor: '#e5e7eb',
+		borderRadius: 10,
+		backgroundColor: '#ffffff',
+	},
+	quantityBtn: {
+		paddingVertical: 8,
+		paddingHorizontal: 12,
+		backgroundColor: '#f3f4f6',
+		borderRadius: 10,
+	},
+	quantityBtnText: { fontSize: 16, fontWeight: '600', color: '#111827' },
+	quantityInput: {
+		fontSize: 16,
+		fontWeight: '500',
+		color: '#111827',
+		textAlign: 'center',
+		width: 50,
+	},
+	actionButtons: {
+		flexDirection: 'row',
+		gap: 8,
+		flexWrap: 'wrap',
+		marginBottom: 16,
+	},
+	addToCart: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		padding: 12,
+		backgroundColor: '#111827',
+		borderRadius: 12,
+	},
+	buyNow: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		padding: 12,
+		backgroundColor: '#73D5E8',
+		borderRadius: 12,
+	},
+	shareBtn: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		paddingVertical: 12,
+		paddingHorizontal: 24,
+		backgroundColor: '#8b5cf6',
+		borderRadius: 12,
+	},
+	actionButtonText: {
+		fontSize: 14,
+		fontWeight: '600',
+		color: '#ffffff',
+		textTransform: 'uppercase',
+	},
+	productDescription: { marginVertical: 16 },
+	descriptionTitle: {
+		fontSize: 18,
+		fontWeight: '600',
+		color: '#111827',
+		marginBottom: 8,
+	},
+	descriptionText: { fontSize: 14, color: '#374151', lineHeight: 22 },
+	sizeChart: { marginVertical: 16 },
+	sizeChartTitle: {
+		fontSize: 18,
+		fontWeight: '600',
+		color: '#111827',
+		marginBottom: 8,
+	},
+	sizeChartTable: {
+		borderWidth: 1,
+		borderColor: '#e5e7eb',
+		borderRadius: 12,
+		backgroundColor: '#ffffff',
+		overflow: 'hidden',
+	},
+	tableRow: {
+		flexDirection: 'row',
+		borderBottomWidth: 1,
+		borderColor: '#e5e7eb',
+	},
+	tableHeader: {
+		backgroundColor: '#f3f4f6',
+		fontWeight: '600',
+		color: '#111827',
+	},
+	tableCell: {
+		flex: 1,
+		padding: 8,
+		fontSize: 14,
+		color: '#374151',
+		textAlign: 'left',
+	},
+	productRecommendations: { paddingVertical: 24, backgroundColor: '#f5f5f5' },
+	recommendationsTitle: {
+		fontSize: 20,
+		fontWeight: '700',
+		color: '#111827',
+		textAlign: 'center',
+		marginBottom: 16,
+	},
+	recommendationsGrid: { paddingHorizontal: 16, gap: 16 },
+	recommendationCard: {
+		width: 150,
+		backgroundColor: '#ffffff',
+		borderRadius: 12,
+		overflow: 'hidden',
+		marginRight: 16,
+	},
+	recommendationImage: { width: '100%', height: 100 },
+	recommendationCardContent: { padding: 8 },
+	recommendationTitle: {
+		fontSize: 14,
+		fontWeight: '600',
+		color: '#111827',
+		marginBottom: 4,
+	},
+	recommendationPrice: { fontSize: 14, fontWeight: '600', color: '#73D5E8' },
 });
 
 export default DetailScreen;
