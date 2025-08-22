@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Orders</title>
+    <style>
+        :root {
+            --primary-dark: #1a1a1a;
+            --primary-light: #ffffff;
+            --accent-cyan: #73D5E8;
+            --accent-gold: #FBC886;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-large: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #f8fafc, #ffffff);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overscroll-behavior: none;
+            font-weight: 500;
+        }
+        h1, h2, h3, .track-btn, .details-btn, .shop-now-btn {
+            font-family: 'Cinzel', serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            background: var(--primary-light);
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 360px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            padding: 16px 20px;
+            box-shadow: var(--shadow-large);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .top-nav .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .top-nav .back-icon {
+            width: 22px;
+            height: 22px;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+        .top-nav .back-icon:hover {
+            color: var(--accent-cyan);
+        }
+        .top-nav h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        /* Main Content */
+        main {
+            padding-top: 64px;
+            padding-bottom: 80px;
+        }
+        /* Orders List */
+        .orders-list {
+            padding: 16px 20px;
+        }
+        .orders-list h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'Cinzel', serif;
+        }
+        .order-card {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: 10px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 12px;
+        }
+        .order-card img {
+            width: 80px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .order-card .details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .order-card .details h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Cinzel', serif;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .order-card .details .price {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-family: 'Cinzel', serif;
+        }
+        .order-card .details .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .order-card .details .status .status-tag {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+        }
+        .order-card .details .status .delivered {
+            background: var(--accent-green);
+            color: var(--primary-light);
+        }
+        .order-card .details .status .shipped {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+        }
+        .order-card .details .status .cancelled {
+            background: var(--accent-red);
+            color: var(--primary-light);
+        }
+        .order-card .details .delivery {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .order-card .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .order-card .actions .track-btn,
+        .order-card .actions .details-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--accent-cyan);
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.2s ease;
+        }
+        .order-card .actions .track-btn:hover,
+        .order-card .actions .details-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+        }
+        /* Empty Orders */
+        .empty-orders {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 16px 20px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-light);
+        }
+        .empty-orders .illustration {
+            max-width: 16rem;
+            height: 160px;
+            margin-bottom: 16px;
+        }
+        .empty-orders h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'Cinzel', serif;
+        }
+        .empty-orders .shop-now-btn {
+            padding: 12px 24px;
+            background: var(--accent-gold);
+            color: var(--primary-light);
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 10px;
+            box-shadow: var(--shadow-soft);
+            transition: background 0.2s ease;
+            font-family: 'Cinzel', serif;
+        }
+        .empty-orders .shop-now-btn:hover {
+            background: #e5b873;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-content">
+                <a href="TFW-Homepage.html" class="back-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"></path>
+                    </svg>
+                </a>
+                <h1>My Orders</h1>
+            </div>
+        </nav>
+        <!-- Main Content -->
+        <main>
+            <!-- Orders List -->
+            <section class="orders-list">
+                <h2>Your Orders</h2>
+                <div class="order-card">
+                    <img src="https://blush.design/api/download?shareUri=n85vEd1YwhYkNmcG&c=Bottom_0%7E89c5cc_Hair_0%7E181658_Skin_0%7Ed4a181_Top_0%7Effa434&bg=ffffff&w=800&h=800&fm=png" alt="Professional Blazer">
+                    <div class="details">
+                        <h3>Professional Blazer</h3>
+                        <span class="price">₹12,470</span>
+                        <div class="status">
+                            <span>Order Status:</span>
+                            <span class="status-tag delivered">Delivered</span>
+                        </div>
+                        <div class="delivery">Delivered on 25 Jul 2025</div>
+                        <div class="actions">
+                            <a href="#" class="track-btn">Track Order</a>
+                            <a href="#" class="details-btn">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-card">
+                    <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?fit=crop&w=80&h=60" alt="Classic Polo Shirt">
+                    <div class="details">
+                        <h3>Classic Polo Shirt</h3>
+                        <span class="price">₹4,570</span>
+                        <div class="status">
+                            <span>Order Status:</span>
+                            <span class="status-tag shipped">Shipped</span>
+                        </div>
+                        <div class="delivery">Estimated Delivery: 2 Aug 2025</div>
+                        <div class="actions">
+                            <a href="Track order.html" class="track-btn">Track Order</a>
+                            <a href="Order-details page.html" class="details-btn">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-card">
+                    <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?fit=crop&w=80&h=60" alt="Casual Sneakers">
+                    <div class="details">
+                        <h3>Casual Sneakers</h3>
+                        <span class="price">₹5,500</span>
+                        <div class="status">
+                            <span>Order Status:</span>
+                            <span class="status-tag cancelled">Cancelled</span>
+                        </div>
+                        <div class="delivery">Cancelled on 20 Jul 2025</div>
+                        <div class="actions">
+                            <a href="#" class="details-btn">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Empty Orders -->
+            <section class="empty-orders">
+                <svg class="illustration" aria-hidden="true" width="256" height="160" viewBox="0 0 433 559" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M278 411H376.905H394C394 399.367 373.853 396.918 365.305 392.633C356.758 388.347 351.874 381 340.884 381C329.895 381 317.074 395.694 302.421 396.918C290.699 397.898 281.256 406.714 278 411Z" fill="var(--primary-dark)" fill-opacity="0.6"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M168.026 452.826L184.979 389.558L186.91 390.076L169.958 453.344L168.026 452.826Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M168.026 452.826L184.979 389.558L186.91 390.076L169.958 453.344L168.026 452.826Z" fill="url(#paint0_linear_275_1403)"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M214.386 396.738L215.461 398.425L178.779 421.802L198.858 460.388L197.084 461.311L176.159 421.1L214.386 396.738Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M214.386 396.738L215.461 398.425L178.779 421.802L198.858 460.388L197.084 461.311L176.159 421.1L214.386 396.738Z" fill="url(#paint1_linear_275_1403)"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M157.854 381.591L156.08 382.514L176.159 421.1L139.477 444.477L140.552 446.164L178.779 421.802L157.854 381.591Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M157.854 381.591L156.08 382.514L176.159 421.1L139.477 444.477L140.552 446.164L178.779 421.802L157.854 381.591Z" fill="url(#paint2_linear_275_1403)"/>
+                    <rect x="175.033" y="411.222" width="10" height="19" rx="2" transform="rotate(15 175.033 411.222)" fill="var(--accent-cyan)"/>
+                    <rect x="175.033" y="411.222" width="10" height="19" rx="2" transform="rotate(15 175.033 411.222)" fill="url(#paint3_linear_275_1403)"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M185.135 362.165L149.568 352.635L149.381 352.585L149.277 352.422C137.811 334.549 121.305 303.062 108.321 266.461C95.3383 229.866 86.0941 188.176 89.6654 150.043C94.1353 102.315 121.144 69.4602 157.326 51.3142C193.491 33.1765 238.817 29.7315 279.991 40.764C321.165 51.7965 358.695 77.4428 380.946 111.233C403.208 145.039 410.171 186.996 390.178 230.565C374.204 265.375 345.354 296.857 315.813 322.058C286.268 347.263 256.354 366.313 237.489 376.058L237.317 376.147L237.13 376.097L195.765 365.013L185.135 362.165Z" fill="#d6e2fb"/>
+                    <path d="M149.338 352.573C179.997 353.968 209.988 362.004 237.237 376.125L234.866 378.144C227.675 384.265 222.516 392.428 220.072 401.549L151.491 383.173C153.935 374.052 153.548 364.403 150.382 355.506L149.338 352.573Z" fill="#d6e2fb"/>
+                    <path d="M149.338 352.573C179.997 353.968 209.988 362.004 237.237 376.125L234.866 378.144C227.675 384.265 222.516 392.428 220.072 401.549L151.491 383.173C153.935 374.052 153.548 364.403 150.382 355.506L149.338 352.573Z" fill="url(#paint5_linear_275_1403)"/>
+                    <rect width="44" height="69" transform="matrix(-0.965926 -0.258819 -0.258819 0.965926 232.295 467.976)" fill="var(--accent-cyan)"/>
+                    <rect width="44" height="69" transform="matrix(-0.965926 -0.258819 -0.258819 0.965926 232.295 467.976)" fill="url(#paint6_linear_275_1403)"/>
+                    <rect x="112.52" y="435.883" width="80" height="69" transform="rotate(15 112.52 435.883)" fill="var(--accent-cyan)"/>
+                    <rect x="111.826" y="477.108" width="29" height="19" rx="2" transform="rotate(15 111.826 477.108)" fill="#d6e2fb"/>
+                    <rect x="112.395" y="486.578" width="16" height="2" rx="1" transform="rotate(15 112.395 486.578)" fill="var(--accent-cyan)"/>
+                    <path d="M204.283 460.471L216.84 463.835L213.734 475.426C213.449 476.493 212.352 477.127 211.285 476.841L202.592 474.511C201.525 474.225 200.891 473.129 201.177 472.062L204.283 460.471Z" fill="#d6e2fb" fill-opacity="0.2"/>
+                    <rect x="111.359" y="490.441" width="12" height="2" rx="1" transform="rotate(15 111.359 490.441)" fill="var(--accent-cyan)"/>
+                    <path d="M116.5 39.5H35.5H21.5C21.5 30 38 28 45 24.5C52 21 56 15 65 15C74 15 84.5 27 96.5 28C106.1 28.8 113.833 36 116.5 39.5Z" fill="var(--primary-dark)"/>
+                    <defs>
+                        <linearGradient id="paint0_linear_275_1403" x1="185.944" y1="389.817" x2="168.992" y2="453.085" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#9ab7f6"/>
+                            <stop offset="1" stopColor="#9ab7f6" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint1_linear_275_1403" x1="200.311" y1="392.967" x2="183.008" y2="457.54" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#9ab7f6"/>
+                            <stop offset="1" stopColor="#9ab7f6" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint2_linear_275_1403" x1="171.93" y1="385.362" x2="154.627" y2="449.935" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#9ab7f6"/>
+                            <stop offset="1" stopColor="#9ab7f6" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint3_linear_275_1403" x1="180.033" y1="403.222" x2="180.033" y2="430.222" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="var(--primary-dark)"/>
+                            <stop offset="1" stopColor="var(--primary-dark)" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint5_linear_275_1403" x1="211.663" y1="295.768" x2="185.781" y2="392.361" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="var(--accent-cyan)"/>
+                            <stop offset="1" stopColor="var(--accent-cyan)" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint6_linear_275_1403" x1="22" y1="-28.5" x2="22" y2="69" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="var(--primary-dark)"/>
+                            <stop offset="1" stopColor="var(--primary-dark)" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h2>No orders yet</h2>
+                <a href="#" class="shop-now-btn">Shop Now</a>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

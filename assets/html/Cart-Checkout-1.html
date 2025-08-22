@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cart Checkout</title>
+    <style>
+        :root {
+            --primary-dark: #1a1a1a;
+            --primary-light: #ffffff;
+            --accent-cyan: #73D5E8;
+            --accent-gold: #FBC886;
+            --accent-green: #22c55e;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-large: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #f8fafc, #ffffff);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overscroll-behavior: none;
+            font-weight: 500;
+        }
+        h1, h2, h3, .buy-now, .remove-btn, .size-option, .shop-now-btn {
+            font-family: 'Cinzel', serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            background: var(--primary-light);
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 360px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            padding: 16px 20px;
+            box-shadow: var(--shadow-large);
+        }
+        .top-nav .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .top-nav .back-icon {
+            width: 22px;
+            height: 22px;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+        .top-nav .back-icon:hover {
+            color: var(--accent-cyan);
+        }
+        /* Main Content */
+        main {
+            padding-top: 64px;
+            padding-bottom: 140px;
+        }
+        /* Cart Items */
+        .cart-items {
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+        .cart-items h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'Cinzel', serif;
+        }
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: 10px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 12px;
+        }
+        .cart-item img {
+            width: 80px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .cart-item .details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .cart-item .details h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Cinzel', serif;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .cart-item .details .size {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        .cart-item .details .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cart-item .details .price {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-family: 'Cinzel', serif;
+        }
+        .cart-item .details .original {
+            font-size: 12px;
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+        .cart-item .details .delivery {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .cart-item .details .delivery .icon {
+            width: 14px;
+            height: 14px;
+            color: var(--accent-gold);
+        }
+        .cart-item .details .delivery span {
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+        .cart-item .quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .cart-item .quantity button {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--accent-cyan);
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-size: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .cart-item .quantity button:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+        }
+        .cart-item .quantity span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .cart-item .remove-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--accent-cyan);
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.2s ease;
+            margin-top: 6px;
+        }
+        .cart-item .remove-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+        }
+        /* Size Selection Panel */
+        .size-panel-overlay {
+            display: none;  /* Dekhiye display none kar diya- warna mujhe prbal iktcha ho rahi thi js daal  du open close karne ke liye par Teri aur Teri mehnat tera sangharsh teri kashamokash yaad aa gayi toh nahi dali*/
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+        .size-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 360px;
+            height: 35vh;
+            background: var(--primary-light);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: var(--shadow-large);
+            z-index: 2100;
+            padding: 20px;
+        }
+        .size-panel .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .size-panel .close-btn:hover {
+            color: var(--accent-cyan);
+        }
+        .size-panel h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Cinzel', serif;
+        }
+        .size-panel .size-options {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .size-panel .size-option {
+            padding: 10px 20px;
+            border: 1px solid var(--accent-cyan);
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .size-panel .size-option.selected {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+        }
+        .size-panel .size-option:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+        }
+        /* Subtotal */
+        .subtotal {
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            margin: 0 20px 24px;
+            border: 1px solid var(--border-light);
+        }
+        .subtotal .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .subtotal .row h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Cinzel', serif;
+        }
+        .subtotal .row .amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-family: 'Cinzel', serif;
+        }
+        .subtotal .row .original-total {
+            font-size: 12px;
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-family: 'Cinzel', serif;
+        }
+        .subtotal .row .shipping {
+            font-size: 12px;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+        }
+        .subtotal .row .free {
+            font-size: 12px;
+            color: var(--accent-green);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .subtotal .row .free .icon {
+            width: 14px;
+            height: 14px;
+            color: var(--accent-green);
+        }
+        .subtotal .delivery {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .subtotal .delivery .icon {
+            width: 14px;
+            height: 14px;
+            color: var(--accent-gold);
+        }
+        .subtotal .delivery span {
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+        /* Bottom Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 360px;
+            background: var(--primary-light);
+            border-top: 1px solid var(--border-light);
+            box-shadow: var(--shadow-large);
+            z-index: 1000;
+            padding: 12px 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+        .bottom-bar .total-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .bottom-bar .total {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Cinzel', serif;
+        }
+        .bottom-bar .delivery {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-family: 'Poppins', sans-serif;
+        }
+        .bottom-bar .delivery .icon {
+            width: 14px;
+            height: 14px;
+            color: var(--accent-gold);
+        }
+        .bottom-bar .buy-now {
+            flex: 1;
+            padding: 14px;
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: background 0.2s ease;
+        }
+        .bottom-bar .buy-now:hover {
+            background: #5bb0c5;
+        }
+        /* Empty Cart */
+        .empty-cart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0 20px 24px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-light);
+        }
+        .empty-cart .illustration {
+            max-width: 16rem;
+            height: 160px;
+            margin-bottom: 16px;
+        }
+        .empty-cart h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'Cinzel', serif;
+        }
+        .empty-cart .shop-now-btn {
+            padding: 12px 24px;
+            background: var(--accent-gold);
+            color: var(--primary-light);
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 10px;
+            box-shadow: var(--shadow-soft);
+            transition: background 0.2s ease;
+            font-family: 'Cinzel', serif;
+        }
+        .empty-cart .shop-now-btn:hover {
+            background: #e5b873;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-content">
+                <a href="TFW-Homepage.html" class="back-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+        <!-- Main Malwa -->
+        <main>
+            <!-- Cart Items -->
+            <section class="cart-items">
+                <h2>My Cart</h2>
+                <div class="cart-item" data-item="blazer">
+                    <img src="https://blush.design/api/download?shareUri=n85vEd1YwhYkNmcG&c=Bottom_0%7E89c5cc_Hair_0%7E181658_Skin_0%7Ed4a181_Top_0%7Effa434&bg=ffffff&w=800&h=800&fm=png" alt="Professional Blazer">
+                    <div class="details">
+                        <h3>Professional Blazer</h3>
+                        <span class="size">Size: M</span>
+                        <div class="price-row">
+                            <span class="price">₹12470</span>
+                            <span class="original">₹15000</span>
+                        </div>
+                        <div class="delivery">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                                <path d="M15 18H9"></path>
+                                <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+                                <circle cx="7" cy="18" r="2"></circle>
+                                <circle cx="17" cy="18" r="2"></circle>
+                                <path d="M2 8h3"></path>
+                                <path d="M2 11h2"></path>
+                            </svg>
+                            <span>Free Delivery</span>
+                        </div>
+                        <div class="quantity">
+                            <button>-</button>
+                            <span>1</span>
+                            <button>+</button>
+                        </div>
+                        <a href="#" class="remove-btn">Remove</a>
+                    </div>
+                </div>
+                <div class="cart-item" data-item="polo">
+                    <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?fit=crop&w=80&h=60" alt="Polo Shirt">
+                    <div class="details">
+                        <h3>Classic Polo Shirt</h3>
+                        <span class="size">Size: L</span>
+                        <div class="price-row">
+                            <span class="price">₹4570</span>
+                            <span class="original">₹7480</span>
+                        </div>
+                        <div class="delivery">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                                <path d="M15 18H9"></path>
+                                <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+                                <circle cx="7" cy="18" r="2"></circle>
+                                <circle cx="17" cy="18" r="2"></circle>
+                                <path d="M2 8h3"></path>
+                                <path d="M2 11h2"></path>
+                            </svg>
+                            <span>Free Delivery</span>
+                        </div>
+                        <div class="quantity">
+                            <button>-</button>
+                            <span>2</span>
+                            <button>+</button>
+                        </div>
+                        <a href="#" class="remove-btn">Remove</a>
+                    </div>
+                </div>
+                <div class="cart-item" data-item="sneakers">
+                    <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?fit=crop&w=80&h=60" alt="Sneakers">
+                    <div class="details">
+                        <h3>Casual Sneakers</h3>
+                        <span class="size">Size: 9</span>
+                        <div class="price-row">
+                            <span class="price">₹5500</span>
+                            <span class="original">₹7000</span>
+                        </div>
+                        <div class="delivery">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                                <path d="M15 18H9"></path>
+                                <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+                                <circle cx="7" cy="18" r="2"></circle>
+                                <circle cx="17" cy="18" r="2"></circle>
+                                <path d="M2 8h3"></path>
+                                <path d="M2 11h2"></path>
+                            </svg>
+                            <span>Free Delivery</span>
+                        </div>
+                        <div class="quantity">
+                            <button>-</button>
+                            <span>1</span>
+                            <button>+</button>
+                        </div>
+                        <a href="#" class="remove-btn">Remove</a>
+                    </div>
+                </div>
+            </section>
+            <!-- Subtotal -->
+            <section class="subtotal">
+                <div class="row">
+                    <h3>Total</h3>
+                    <div>
+                        <span class="amount">₹22540</span>
+                        <span class="original-total">₹29480</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <span class="shipping">Shipping Charge</span>
+                    <div class="free">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                            <path d="M20 6L9 17l-5-5"></path>
+                        </svg>
+                        <span>Free</span>
+                    </div>
+                </div>
+                <div class="delivery">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                        <path d="M15 18H9"></path>
+                        <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+                        <circle cx="7" cy="18" r="2"></circle>
+                        <circle cx="17" cy="18" r="2"></circle>
+                        <path d="M2 8h3"></path>
+                        <path d="M2 11h2"></path>
+                    </svg>
+                    <span>Free Delivery</span>
+                </div>
+            </section>
+            <!-- Size Selection Panel -->
+            <div class="size-panel-overlay">
+                <div class="size-panel">
+                    <div class="close-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6L6 18"></path>
+                            <path d="M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <h3>Select Size</h3>
+                    <div class="size-options">
+                        <div class="size-option">S</div>
+                        <div class="size-option selected">M</div>
+                        <div class="size-option">L</div>
+                        <div class="size-option">XL</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Empty Cart -->
+            <section class="empty-cart">
+                <svg class="illustration" aria-hidden="true" width="256" height="160" viewBox="0 0 433 559" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M278 411H376.905H394C394 399.367 373.853 396.918 365.305 392.633C356.758 388.347 351.874 381 340.884 381C329.895 381 317.074 395.694 302.421 396.918C290.699 397.898 281.256 406.714 278 411Z" fill="var(--primary-dark)" fill-opacity="0.6"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M168.026 452.826L184.979 389.558L186.91 390.076L169.958 453.344L168.026 452.826Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M168.026 452.826L184.979 389.558L186.91 390.076L169.958 453.344L168.026 452.826Z" fill="url(#paint0_linear_275_1403)"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M214.386 396.738L215.461 398.425L178.779 421.802L198.858 460.388L197.084 461.311L176.159 421.1L214.386 396.738Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M214.386 396.738L215.461 398.425L178.779 421.802L198.858 460.388L197.084 461.311L176.159 421.1L214.386 396.738Z" fill="url(#paint1_linear_275_1403)"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M157.854 381.591L156.08 382.514L176.159 421.1L139.477 444.477L140.552 446.164L178.779 421.802L157.854 381.591Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M157.854 381.591L156.08 382.514L176.159 421.1L139.477 444.477L140.552 446.164L178.779 421.802L157.854 381.591Z" fill="url(#paint2_linear_275_1403)"/>
+                    <rect x="175.033" y="411.222" width="10" height="19" rx="2" transform="rotate(15 175.033 411.222)" fill="var(--accent-cyan)"/>
+                    <rect x="175.033" y="411.222" width="10" height="19" rx="2" transform="rotate(15 175.033 411.222)" fill="url(#paint3_linear_275_1403)"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M185.135 362.165L149.568 352.635L149.381 352.585L149.277 352.422C137.811 334.549 121.305 303.062 108.321 266.461C95.3383 229.866 86.0941 188.176 89.6654 150.043C94.1353 102.315 121.144 69.4602 157.326 51.3142C193.491 33.1765 238.817 29.7315 279.991 40.764C321.165 51.7965 358.695 77.4428 380.946 111.233C403.208 145.039 410.171 186.996 390.178 230.565C374.204 265.375 345.354 296.857 315.813 322.058C286.268 347.263 256.354 366.313 237.489 376.058L237.317 376.147L237.13 376.097L195.765 365.013L185.135 362.165Z" fill="#d6e2fb"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M221.781 34.7273C198.647 51.2191 176.941 80.4991 170.262 129.77C158.362 217.555 174.998 318.453 185.658 361.788L191.023 363.225C194.116 329.503 199.299 278.136 205.173 229.587C211.231 179.508 218.035 132.331 224.05 110.658C234.827 71.8267 247.187 49.0496 258.421 36.3452C246.256 34.5991 233.936 34.058 221.781 34.7273ZM218.075 34.9692C195.499 52.0571 174.798 81.4221 168.28 129.502C156.431 216.912 172.753 317.152 183.455 361.197L175.132 358.967C161.057 317.988 134.229 225.304 133.545 164.301C132.781 96.1295 164.506 55.5421 185.949 40.419C196.34 37.6117 207.127 35.7964 218.075 34.9692ZM180.607 41.9606C158.92 59.5359 130.822 99.831 131.545 164.323C132.226 225.043 158.61 316.716 172.805 358.344L162.56 355.598C153.368 338.076 140.639 305.164 129.849 269.65C118.723 233.031 109.701 193.782 108.722 165.908C107.174 121.867 116.648 89.043 137.907 63.0852C143.993 58.6151 150.496 54.6701 157.326 51.2493C164.739 47.5364 172.538 44.4408 180.607 41.9606ZM131.559 68.0687C108.815 87.1461 93.0377 114.373 89.7244 149.819C86.1651 187.898 95.4162 229.53 108.402 266.077C121.39 302.629 138.131 334.14 149.595 351.99L149.7 352.153L149.887 352.203L159.946 354.898C150.745 336.855 138.414 304.721 127.935 270.232C116.798 233.575 107.712 194.122 106.723 165.978C105.282 124.965 113.333 93.4253 131.559 68.0687ZM260.792 36.7011C249.656 48.834 237.021 71.3989 225.977 111.193C220.01 132.691 213.222 179.705 207.158 229.827C201.268 278.518 196.071 330.049 192.983 363.75L193.419 363.867C207.595 333.137 228.86 285.911 248.104 240.799C267.914 194.359 285.542 150.25 291.124 128.649C301.465 88.6318 301.798 62.7635 298.21 46.6907C292.225 44.3942 286.118 42.4057 279.928 40.7473C273.631 39.0598 267.236 37.7109 260.792 36.7011ZM300.442 47.5635C303.828 64.1807 303.151 90.0976 293.06 129.149C287.433 150.926 269.736 195.185 249.944 241.584C230.756 286.565 209.561 333.642 195.379 364.392L195.831 364.513L200.743 365.83C231.643 333.631 296.499 254.568 330.086 172.595C348.978 126.487 344.762 90.2199 332.915 64.3596C322.738 57.7482 311.821 52.0983 300.442 47.5635ZM336.004 66.4116C347.071 92.513 350.373 128.355 331.936 173.353C298.493 254.977 234.237 333.626 202.947 366.42L211.269 368.65C243.948 340.199 313.524 273.346 344.618 220.858C379.57 161.856 372.098 110.588 360.981 86.9526C353.409 79.4152 345.017 72.531 336.004 66.4116ZM364.87 90.959C374.979 116.915 379.387 166.088 346.339 221.877C315.389 274.122 246.704 340.321 213.596 369.274L222.394 371.631C239.115 361.052 266.595 338.913 293.696 313.553C321.641 287.403 349.078 257.923 363.864 234.273C388.499 194.869 396.282 160.139 388.99 125.217C386.574 120.389 383.853 115.692 380.854 111.144C376.167 104.035 370.803 97.2863 364.87 90.959ZM392.291 132.347C397.152 165.323 388.663 198.378 365.56 235.333C350.631 259.212 323.036 288.836 295.063 315.013C268.743 339.643 241.997 361.305 225.007 372.331L236.82 375.496L237.007 375.546L237.178 375.458C256.032 365.731 286.285 346.813 315.809 321.652C345.329 296.494 374.157 265.065 390.113 230.308C406.087 195.516 404.825 161.747 392.291 132.347Z" fill="url(#paint4_linear_275_1403)"/>
+                    <path d="M149.338 352.573C179.997 353.968 209.988 362.004 237.237 376.125L234.866 378.144C227.675 384.265 222.516 392.428 220.072 401.549L151.491 383.173C153.935 374.052 153.548 364.403 150.382 355.506L149.338 352.573Z" fill="#d6e2fb"/>
+                    <path d="M149.338 352.573C179.997 353.968 209.988 362.004 237.237 376.125L234.866 378.144C227.675 384.265 222.516 392.428 220.072 401.549L151.491 383.173C153.935 374.052 153.548 364.403 150.382 355.506L149.338 352.573Z" fill="url(#paint5_linear_275_1403)"/>
+                    <rect width="44" height="69" transform="matrix(-0.965926 -0.258819 -0.258819 0.965926 232.295 467.976)" fill="var(--accent-cyan)"/>
+                    <rect width="44" height="69" transform="matrix(-0.965926 -0.258819 -0.258819 0.965926 232.295 467.976)" fill="url(#paint6_linear_275_1403)"/>
+                    <rect x="112.52" y="435.883" width="80" height="69" transform="rotate(15 112.52 435.883)" fill="var(--accent-cyan)"/>
+                    <rect x="111.826" y="477.108" width="29" height="19" rx="2" transform="rotate(15 111.826 477.108)" fill="#d6e2fb"/>
+                    <rect x="112.395" y="486.578" width="16" height="2" rx="1" transform="rotate(15 112.395 486.578)" fill="var(--accent-cyan)"/>
+                    <path d="M204.283 460.471L216.84 463.835L213.734 475.426C213.449 476.493 212.352 477.127 211.285 476.841L202.592 474.511C201.525 474.225 200.891 473.129 201.177 472.062L204.283 460.471Z" fill="#d6e2fb" fill-opacity="0.2"/>
+                    <rect x="111.359" y="490.441" width="12" height="2" rx="1" transform="rotate(15 111.359 490.441)" fill="var(--accent-cyan)"/>
+                    <path d="M116.5 39.5H35.5H21.5C21.5 30 38 28 45 24.5C52 21 56 15 65 15C74 15 84.5 27 96.5 28C106.1 28.8 113.833 36 116.5 39.5Z" fill="var(--primary-dark)"/>
+                    <defs>
+                        <linearGradient id="paint0_linear_275_1403" x1="185.944" y1="389.817" x2="168.992" y2="453.085" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#9ab7f6"/>
+                            <stop offset="1" stop-color="#9ab7f6" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint1_linear_275_1403" x1="200.311" y1="392.967" x2="183.008" y2="457.54" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#9ab7f6"/>
+                            <stop offset="1" stop-color="#9ab7f6" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint2_linear_275_1403" x1="171.93" y1="385.362" x2="154.627" y2="449.935" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#9ab7f6"/>
+                            <stop offset="1" stop-color="#9ab7f6" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint3_linear_275_1403" x1="180.033" y1="403.222" x2="180.033" y2="430.222" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="var(--primary-dark)"/>
+                            <stop offset="1" stop-color="var(--primary-dark)" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint4_linear_275_1403" x1="258.705" y1="119.953" x2="193.353" y2="363.849" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#d6e2fb"/>
+                            <stop offset="1" stop-color="#d6e2fb" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint5_linear_275_1403" x1="211.663" y1="295.768" x2="185.781" y2="392.361" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="var(--accent-cyan)"/>
+                            <stop offset="1" stop-color="var(--accent-cyan)" stop-opacity="0"/>
+                        </linearGradient>
+                        <linearGradient id="paint6_linear_275_1403" x1="22" y1="-28.5" x2="22" y2="69" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="var(--primary-dark)"/>
+                            <stop offset="1" stop-color="var(--primary-dark)" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h2>Your cart is empty</h2>
+                <a href="#" class="shop-now-btn">Shop Now</a>
+            </section>
+        </main>
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+            <div class="total-container">
+                <span class="total">₹22540</span>
+                <div class="delivery">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                        <path d="M15 18H9"></path>
+                        <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+                        <circle cx="7" cy="18" r="2"></circle>
+                        <circle cx="17" cy="18" r="2"></circle>
+                        <path d="M2 8h3"></path>
+                        <path d="M2 11h2"></path>
+                    </svg>
+                    <span>Free Delivery</span>
+                </div>
+            </div>
+            <a href="#" class="buy-now">Buy Now</a>
+        </div>
+    </div>
+    <!--  Mujhe pata laga ki aap is type se fide likhte hai- 
+    
+  import { StyleSheet } from 'react-native';
+
+export const colors = {
+  primaryDark: '#1a1a1a',
+  primaryLight: '#ffffff',
+  accentCyan: '#73D5E8',
+  accentGold: '#FBC886',
+  accentGreen: '#22c55e',
+  textPrimary: '#111827',
+  textSecondary: '#6b7280',
+  textLight: '#9ca3af',
+  bgLight: '#f8fafc',
+  bgCard: '#ffffff',
+  borderLight: '#e5e7eb',
+};
+
+
+<Image source={{ uri: 'https://blush.design/api/download?shareUri=n85vEd1YwhYkNmcG&c=Bottom_0%7E89c5cc_Hair_0%7E181658_Skin_0%7Ed4a181_Top_0%7Effa434&bg=ffffff&w=800&h=800&fm=png' }} style={{ width: 80, height: 60, borderRadius: 6 }} />
+
+Itna sangharsh- ek choti si chiz ko khich diya gaya hai yeh innovation hai <img> tag ko <image> kar diya gaya hai yeh innovation hai, src ko source kar diya gaya hai yeh bhi innovation hai waah re! Yeh langauge banane wale 42 topo ki salami deta hun tujhe aur aasha karta hun ki 42 ki 42 topo ke gole tujhe hi Lage- baki koi baat baat hogi ismein tab hi sab app development mein isi mein apna sir ghiste hai!
+-->
+</body>
+</html>

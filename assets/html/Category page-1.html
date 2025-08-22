@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>Categories page</title>
+		<style>
+			:root {
+			    --bg: #F9FBFD;
+			    --bg-secondary: #F3F5F8;
+			    --text: #0D1527;
+			    --text-secondary: #374151;
+			    --accent-cyan: #73D5E8; /
+			    --accent-gold: #FBC886;
+			    --border: #E5E7EB;
+			    --font-heading: 'Cinzel', serif;
+			    --font-body: 'Poppins', sans-serif;
+			    --radius: 12px;
+			    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+			    --shadow-card: 0 4px 14px rgba(251, 200, 134, 0.25);
+			    --padding: 0.7rem;
+			    --gap: 0.6rem;
+			    --header-height: 60px;
+			    --sidebar-width: 80px;
+			}
+			* {
+			    margin: 0;
+			    padding: 0;
+			    box-sizing: border-box;
+			    -webkit-tap-highlight-color: transparent;
+			}
+			@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+			body {
+			    font-family: var(--font-body);
+			    background: var(--bg-secondary);
+			    color: var(--text);
+			    line-height: 1.5;
+			    overscroll-behavior: none;
+			    overflow: hidden;
+			}
+			h1, h2, .category-name, .featured-label, .subcategory-name {
+			    font-family: var(--font-heading);
+			}
+			.mobile-container {
+			    width: 100%;
+			    max-width: 360px;
+			    margin: 0 auto;
+			    background: linear-gradient(to bottom, #F9FBFD, #F5FBFE);
+			    min-height: 100vh;
+			    display: flex;
+			    flex-direction: column;
+			    overflow: hidden;
+			}
+			/* Header */
+			.header {
+			    position: fixed;
+			    top: 0;
+			    left: 50%;
+			    transform: translateX(-50%);
+			    width: 100%;
+			    max-width: 360px;
+			    height: var(--header-height);
+			    background: rgba(255, 255, 255, 0.95);
+			    backdrop-filter: blur(12px);
+			    border-bottom: 2px solid var(--accent-held);
+			    box-shadow: var(--shadow);
+			    z-index: 1000;
+			    display: flex;
+			    align-items: center;
+			    padding: 0 var(--padding);
+			}
+			.header .nav-content {
+			    display: flex;
+			    align-items: center;
+			    gap: 12px;
+			}
+			.header .back-icon {
+			    width: 24px;
+			    height: 24px;
+			    color: var(--text-secondary);
+			}
+			.header h1 {
+			    font-size: 21px; /* yahan se app header ke text ke size ke sath apne mano ikthcha anusar badlav kar sakte hai (filhaal jarurat nahi hai sahi lag raha hai) */
+			    font-weight: 700;
+			    color: var(--text);
+			}
+			/* Sidebar */
+			.categories-layout {
+			    display: flex;
+			    height: calc(100vh - var(--header-height));
+			    margin-top: var(--header-height);
+			}
+			.sidebar {
+			    width: var(--sidebar-width);
+			    background: rgba(255, 255, 255, 0.95);
+			    backdrop-filter: blur(12px);
+			    border-right: 1px solid var(--border);
+			    overflow-y: auto;
+			    scrollbar-width: none;
+			    -ms-overflow-style: none;
+			    padding: 8px 5px;
+			}
+			.sidebar::-webkit-scrollbar {
+			    display: none;
+			}
+			.category-list {
+			    list-style: none;
+			    display: flex;
+			    flex-direction: column;
+			    gap: 8px; /* yahan se aap side bar items ke gap ke sath chedkhani kar sakte hai */
+			}
+			.category-btn {
+			    display: flex;
+			    flex-direction: column;
+			    align-items: center;
+			    gap: 6px;
+			    padding: 8px;
+			    text-decoration: none;
+			    color: var(--text);
+			    width: 100%;
+			    text-align: center;
+			    position: relative;
+			    z-index: 2;
+			    background: transparent;
+			    border: none;
+			    font-size: 11.5px; /* Suchna- yahan se  side bar ke categories ke text me size ko aap binddas  adjust kar sakte hai*/
+			    font-weight: 700;
+			}
+			.category-btn.active::after {
+			    content: '';
+			    position: absolute;
+			    left: 0px;
+			    top: 10%;
+			    width: 5px;
+			    height: 50px; /* Yahan se indicator wali line ko adjust kar lijiyega */
+			    background: linear-gradient(to bottom, #73D5E8, #5AB8D0);
+			    border-radius: 3px;
+			    z-index: 0;
+			}
+			.category-btn img {
+			    width: 52px;
+			    height: 52px;
+			    border-radius: 25%;
+			    object-fit: cover;
+			    border: 1px solid var(--border);
+			    box-shadow: var(--shadow);
+			}
+			/* Main content  */
+			.main-content {
+			    flex: 1;
+			    max-width: 280px;
+			    padding: 12px;
+			    overflow-y: auto;
+			    scrollbar-width: none;
+			    -ms-overflow-style: none;
+			}
+			.main-content::-webkit-scrollbar {
+			    display: none;
+			}
+			.categories {
+			    display: flex;
+			    flex-direction: column;
+			    gap: 18px;
+			}
+			.category-section {
+			    animation: fadeIn 0.3s ease-in-out;
+			}
+			@keyframes fadeIn {
+			    from { opacity: 0; }
+			    to { opacity: 1; }
+			}
+			.section-title {
+			    font-size: 19px;
+			    font-weight: 700;
+			    color: var(--text);
+			    margin-bottom: var(--padding);
+			    padding-left: 8px;
+			}
+			/* Featured section  */
+			.featured-section {
+			    margin-bottom: 18px;
+			}
+			.featured-scroll {
+			    display: flex;
+			    gap: var(--gap);
+			    overflow-x: auto;
+			    padding: 10px;
+			    scrollbar-width: none;
+			    -ms-overflow-style: none;
+			}
+			.featured-scroll::-webkit-scrollbar {
+			    display: none;
+			}
+			.featured-card {
+			    flex: 0 0 105px;
+			    display: flex;
+			    flex-direction: column;
+			    align-items: center;
+			    gap: 8px;
+			}
+			.featured-image {
+			    width: 105px;
+			    height: 105px;
+			    border-radius: 25%;
+			    object-fit: cover;
+			    border: 1px solid var(--border);
+			    box-shadow: var(--shadow-card);
+			}
+			.featured-label {
+			    font-size: 14px;
+			    font-weight: 600;
+			    color: var(--text);
+			    text-align: center;
+			    font-family: var(--font-heading);
+			}
+			/* Sub-Category Grid */
+			.popular-grid {
+			    display: grid;
+			    grid-template-columns: repeat(2, 110px);
+			    grid-template-rows: repeat(3, auto);
+			    gap: 10px;
+			    justify-content: center;
+			    padding: 10px;
+			}
+			.popular-item {
+			    display: flex;
+			    flex-direction: column;
+			    align-items: center;
+			    gap: 8px;
+			}
+			.popular-image {
+			    width: 92px;
+			    height: 92px;
+			    border-radius: 25%;
+			    object-fit: cover;
+			    border: 1px solid var(--border);
+			    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			}
+			.popular-title {
+			    font-size: 13.5px;
+			    font-weight: 600;
+			    color: var(--text);
+			    text-align: center;
+			    font-family: var(--font-heading);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mobile-container">
+			<!-- Header -->
+			<!-- Main Layout -->
+			<div class="categories-layout">
+				<!-- Sidebar -->
+				<nav class="sidebar">
+					<ul class="category-list">
+						<li>
+							<button class="category-btn active" aria-label="Men Accessories">
+								<img src="../Images/t.jpg" alt="Men Accessories" />
+								<span>Men Accessories</span>
+							</button>
+						</li>
+						<li>
+							<button class="category-btn" aria-label="Men's Clothes">
+								<img src="../Images/t2.jpg" alt="Men's Clothes" />
+								<span>Men's Clothes</span>
+							</button>
+						</li>
+						<li>
+							<button class="category-btn" aria-label="Kids' Clothes">
+								<img src="../Images/t3.jpg" alt="Kids' Clothes" />
+								<span>Kids' Clothes</span>
+							</button>
+						</li>
+						<li>
+							<button class="category-btn" aria-label="Women's Clothes">
+								<img src="../Images/t4.jpg" alt="Women's Clothes" />
+								<span>Women's Clothes</span>
+							</button>
+						</li>
+					</ul>
+				</nav>
+				<!-- main Content -->
+				<main class="main-content">
+					<section class="categories">
+						<!-- Men Accessories -->
+						<section class="category-section">
+							<h2 class="section-title">Men Accessories</h2>
+							<div class="popular-grid">
+								<div class="popular-item" aria-label="Watches">
+									<img
+										class="popular-image"
+										src="../Images/women.png"
+										alt="Watches" />
+									<div class="popular-title">Watches</div>
+								</div>
+								<div class="popular-item" aria-label="Wallets">
+									<img
+										class="popular-image"
+										src="../Images/saree.jpg"
+										alt="Wallets" />
+									<div class="popular-title">Wallets</div>
+								</div>
+								<div class="popular-item" aria-label="Belts">
+									<img
+										class="popular-image"
+										src="../Images/a8.jpg"
+										alt="Belts" />
+									<div class="popular-title">Belts</div>
+								</div>
+								<div class="popular-item" aria-label="Sunglasses">
+									<img
+										class="popular-image"
+										src="../Images/n.jpg"
+										alt="Sunglasses" />
+									<div class="popular-title">Sunglasses</div>
+								</div>
+								<div class="popular-item" aria-label="Ties">
+									<img class="popular-image" src="../Images/t.jpg" alt="Ties" />
+									<div class="popular-title">Perfumes</div>
+								</div>
+								<div class="popular-item" aria-label="Cufflinks">
+									<img
+										class="popular-image"
+										src="../Images/pink.jpg"
+										alt="Cufflinks" />
+									<div class="popular-title">Cap</div>
+								</div>
+							</div>
+						</section>
+						<!-- Men's Clothes -->
+						<section class="category-section">
+							<h2 class="section-title">Men's Clothes</h2>
+							<div class="popular-grid">
+								<div class="popular-item" aria-label="Shirts">
+									<img
+										class="popular-image"
+										src="../Images/white.jpg"
+										alt="Shirts" />
+									<div class="popular-title">Shirts</div>
+								</div>
+								<div class="popular-item" aria-label="Trousers">
+									<img
+										class="popular-image"
+										src="../Images/orange 2.jpg"
+										alt="Trousers" />
+									<div class="popular-title">Pant</div>
+								</div>
+								<div class="popular-item" aria-label="Kurtas">
+									<img
+										class="popular-image"
+										src="../Images/orange.jpg"
+										alt="Kurtas" />
+									<div class="popular-title">Kurtas</div>
+								</div>
+								<div class="popular-item" aria-label="Jackets">
+									<img
+										class="popular-image"
+										src="../Images/blue.jpg"
+										alt="Jackets" />
+									<div class="popular-title">Jackets</div>
+								</div>
+								<div class="popular-item" aria-label="T-Shirts">
+									<img
+										class="popular-image"
+										src="../Images/blue2.jpg"
+										alt="T-Shirts" />
+									<div class="popular-title">T-Shirts</div>
+								</div>
+								<div class="popular-item" aria-label="Suits">
+									<img
+										class="popular-image"
+										src="../Images/white2.jpg"
+										alt="Suits" />
+									<div class="popular-title">Suits</div>
+								</div>
+							</div>
+						</section>
+						<!-- Kids' Clothes -->
+						<section class="category-section">
+							<h2 class="section-title">Kids' Clothes</h2>
+							<div class="popular-grid">
+								<div class="popular-item" aria-label="Boys' Clothing">
+									<img
+										class="popular-image"
+										src="../Images/t7.jpg"
+										alt="Boys' Clothing" />
+									<div class="popular-title">Boys' Clothing</div>
+								</div>
+								<div class="popular-item" aria-label="Girls' Clothing">
+									<img
+										class="popular-image"
+										src="../Images/t8.jpg"
+										alt="Girls' Clothing" />
+									<div class="popular-title">Girls' Clothing</div>
+								</div>
+								<div class="popular-item" aria-label="Baby Clothing">
+									<img
+										class="popular-image"
+										src="../Images/t9.jpg"
+										alt="Baby Clothing" />
+									<div class="popular-title">Baby Clothing</div>
+								</div>
+								<div class="popular-item" aria-label="Kids' Accessories">
+									<img
+										class="popular-image"
+										src="../Images/t10.jpg"
+										alt="Kids' Accessories" />
+									<div class="popular-title">Kids' Accessories</div>
+								</div>
+								<div class="popular-item" aria-label="School Uniforms">
+									<img
+										class="popular-image"
+										src="../Images/t.jpg"
+										alt="School Uniforms" />
+									<div class="popular-title">School Uniforms</div>
+								</div>
+								<div class="popular-item" aria-label="Kids' Jackets">
+									<img
+										class="popular-image"
+										src="../Images/t2.jpg"
+										alt="Kids' Jackets" />
+									<div class="popular-title">Kids' Jackets</div>
+								</div>
+							</div>
+						</section>
+						<!-- Women's Clothes -->
+						<section class="category-section">
+							<h2 class="section-title">Women's Clothes</h2>
+							<div class="popular-grid">
+								<div class="popular-item" aria-label="Lehenga">
+									<img
+										class="popular-image"
+										src="../Images/t3.jpg"
+										alt="Lehenga" />
+									<div class="popular-title">Lehenga</div>
+								</div>
+								<div class="popular-item" aria-label="Kurti">
+									<img
+										class="popular-image"
+										src="../Images/t4.jpg"
+										alt="Kurti" />
+									<div class="popular-title">Kurti</div>
+								</div>
+								<div class="popular-item" aria-label="Saree">
+									<img
+										class="popular-image"
+										src="../Images/t5.jpg"
+										alt="Saree" />
+									<div class="popular-title">Saree</div>
+								</div>
+								<div class="popular-item" aria-label="Anarkali">
+									<img
+										class="popular-image"
+										src="../Images/t6.jpg"
+										alt="Anarkali" />
+									<div class="popular-title">Anarkali</div>
+								</div>
+								<div class="popular-item" aria-label="Western Dresses">
+									<img
+										class="popular-image"
+										src="../Images/t7.jpg"
+										alt="Western Dresses" />
+									<div class="popular-title">Western Dresses</div>
+								</div>
+								<div class="popular-item" aria-label="Blouses">
+									<img
+										class="popular-image"
+										src="../Images/t8.jpg"
+										alt="Blouses" />
+									<div class="popular-title">Blouses</div>
+								</div>
+							</div>
+						</section>
+					</section>
+				</main>
+			</div>
+		</div>
+	</body>
+</html>

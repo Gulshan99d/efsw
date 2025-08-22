@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Order & Tracking</title>
+    <style>
+        :root {
+            --primary-dark: #1a1a1a;
+            --primary-light: #ffffff;
+            --accent-cyan: #73D5E8;
+            --accent-gold: #FBC886;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-large: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 8px rgba(115, 213, 232, 0.3);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #f8fafc, #ffffff);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overscroll-behavior: none;
+            font-weight: 500;
+        }
+        h1, h2, h3, .action-btn {
+            font-family: 'Cinzel', serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            background: var(--primary-light);
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 360px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            padding: 16px 20px;
+            box-shadow: var(--shadow-large);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .top-nav .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .top-nav .back-icon {
+            width: 22px;
+            height: 22px;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+        .top-nav .back-icon:hover {
+            color: var(--accent-cyan);
+        }
+        .top-nav h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        /* Main Content */
+        main {
+            padding-top: 64px;
+            padding-bottom: 80px;
+        }
+        /* Order & Tracking Section */
+        .order-tracking {
+            padding: 16px 20px;
+        }
+        .order-tracking h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'Cinzel', serif;
+        }
+        .order-tracking-card {
+            padding: 16px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .order-tracking-card .product {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 12px;
+        }
+        .order-tracking-card .product img {
+            width: 80px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .order-tracking-card .product .details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .order-tracking-card .product .details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Cinzel', serif;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .order-tracking-card .product .details .size,
+        .order-tracking-card .product .details .quantity {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .order-tracking-card .product .details .price {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-family: 'Cinzel', serif;
+        }
+        .order-tracking-card .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        .order-tracking-card .status .status-tag {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+        }
+        .order-tracking-card .status .delivered {
+            background: var(--accent-green);
+            color: var(--primary-light);
+        }
+        .order-tracking-card .status .pending {
+            background: var(--text-light);
+            color: var(--text-primary);
+        }
+        /* Status Tracker */
+        .status-tracker {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .status-tracker .tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .status-tracker .tracker::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 7%;
+            width: 86%;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent-green), var(--accent-cyan));
+            z-index: 1;
+            border-radius: 2px;
+        }
+        .status-tracker .tracker .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 25%;
+            text-align: center;
+            z-index: 2;
+        }
+        .status-tracker .tracker .step .dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--text-light);
+            border: 2px solid var(--border-light);
+            transition: box-shadow 0.3s ease;
+        }
+        .status-tracker .tracker .step.active .dot {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--shadow-glow);
+        }
+        .status-tracker .tracker .step.completed .dot {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+        .status-tracker .tracker .step.pending .dot {
+            background: var(--bg-light);
+            border-color: var(--text-light);
+        }
+        .status-tracker .tracker .step .label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.2;
+        }
+        .status-tracker .tracker .step.pending .label {
+            color: var(--text-light);
+        }
+        .status-tracker .tracker .step .date {
+            font-size: 9px;
+            color: var(--text-light);
+            line-height: 1.2;
+        }
+        /* Tracking Timeline */
+        .tracking-timeline {
+            margin-bottom: 20px;
+        }
+        .tracking-timeline h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .tracking-timeline .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .tracking-timeline .timeline .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--bg-light);
+            transition: transform 0.3s ease;
+        }
+        .tracking-timeline .timeline .step.pending {
+            opacity: 0.6;
+            transform: scale(0.98);
+        }
+        .tracking-timeline .timeline .step .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-top: 4px;
+            transition: all 0.3s ease;
+        }
+        .tracking-timeline .timeline .step.completed .dot {
+            background: var(--accent-green);
+            border: 2px solid var(--accent-green);
+        }
+        .tracking-timeline .timeline .step.pending .dot {
+            background: var(--bg-light);
+            border: 2px solid var(--text-light);
+        }
+        .tracking-timeline .timeline .step .details {
+            flex: 1;
+        }
+        .tracking-timeline .timeline .step .details .label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .tracking-timeline .timeline .step.pending .details .label {
+            color: var(--text-secondary);
+        }
+        .tracking-timeline .timeline .step .details .date {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        .tracking-timeline .timeline .step.pending .details .date,
+        .tracking-timeline .timeline .step.pending .details .desc {
+            color: var(--text-light);
+        }
+        .tracking-timeline .timeline .step .details .desc {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+        /* Delivery and Tracking Info */
+        .delivery-info, .tracking-info, .payment-info {
+            margin-bottom: 20px;
+        }
+        .delivery-info h3, .tracking-info h3, .payment-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .delivery-info p, .tracking-info .row, .payment-info .row {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .tracking-info .row, .payment-info .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .payment-info .row .amount {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+        /* Actions */
+        .order-tracking-card .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .order-tracking-card .actions .action-btn {
+            flex: 1;
+            min-width: 100px;
+            max-width: 100%;
+            padding: 10px;
+            border: 1px solid var(--accent-cyan);
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-size: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .order-tracking-card .actions .action-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-light);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--shadow-glow);
+        }
+        .order-tracking-card .actions .action-btn svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent-cyan);
+            transition: color 0.3s ease;
+        }
+        .order-tracking-card .actions .action-btn:hover svg {
+            color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-content">
+                <a href="My orders.html" class="back-icon" aria-label="Back to My Orders">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"></path>
+                    </svg>
+                </a>
+                <h1>Order & Tracking</h1>
+            </div>
+        </nav>
+        <!-- Main Content -->
+        <main>
+            <!-- Order & Tracking Section -->
+            <section class="order-tracking">
+                <h2>Order #123456</h2>
+                <div class="order-tracking-card">
+                    <div class="product">
+                        <img src="https://blush.design/api/download?shareUri=n85vEd1YwhYkNmcG&c=Bottom_0%7E89c5cc_Hair_0%7E181658_Skin_0%7Ed4a181_Top_0%7Effa434&bg=ffffff&w=800&h=800&fm=png" alt="Professional Blazer">
+                        <div class="details">
+                            <h3>Professional Blazer</h3>
+                            <span class="size">Size: M</span>
+                            <span class="quantity">Quantity: 1</span>
+                            <span class="price">₹12,470</span>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <span>Order Status:</span>
+                        <span class="status-tag pending">In Transit</span>
+                    </div>
+                    <div class="status-tracker">
+                        <div class="tracker">
+                            <div class="step completed">
+                                <div class="dot"></div>
+                                <span class="label">Ordered</span>
+                                <span class="date">20 Jul 2025</span>
+                            </div>
+                            <div class="step completed">
+                                <div class="dot"></div>
+                                <span class="label">Shipped</span>
+                                <span class="date">22 Jul 2025</span>
+                            </div>
+                            <div class="step completed">
+                                <div class="dot"></div>
+                                <span class="label">In Transit</span>
+                                <span class="date">23 Jul 2025</span>
+                            </div>
+                            <div class="step pending">
+                                <div class="dot"></div>
+                                <span class="label">Delivered</span>
+                                <span class="date">Est. 25 Jul 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tracking-timeline">
+                        <h3>Tracking #35269</h3>
+                        <div class="timeline">
+                            <div class="step completed">
+                                <div class="dot"></div>
+                                <div class="details">
+                                    <span class="label">Order Confirmed</span>
+                                    <span class="date">20 Jul 2025, 10:00 AM</span>
+                                    <span class="desc">Your order has been confirmed.</span>
+                                </div>
+                            </div>
+                            <div class="step completed">
+                                <div class="dot"></div>
+                                <div class="details">
+                                    <span class="label">Shipped</span>
+                                    <span class="date">22 Jul 2025, 2:00 PM</span>
+                                    <span class="desc">Order picked up by BlueDart.</span>
+                                </div>
+                            </div>
+                            <div class="step pending">
+                                <div class="dot"></div>
+                                <div class="details">
+                                    <span class="label">In Transit</span>
+                                    <span class="date">23 Jul 2025, 9:00 AM</span>
+                                    <span class="desc">Order reached Mumbai hub.</span>
+                                </div>
+                            </div>
+                            <div class="step pending">
+                                <div class="dot"></div>
+                                <div class="details">
+                                    <span class="label">Out for Delivery</span>
+                                    <span class="date">Est. 24 Jul 2025</span>
+                                    <span class="desc">Order will be out for delivery soon.</span>
+                                </div>
+                            </div>
+                            <div class="step pending">
+                                <div class="dot"></div>
+                                <div class="details">
+                                    <span class="label">Delivered</span>
+                                    <span class="date">Est. 25 Jul 2025</span>
+                                    <span class="desc">Order will be delivered to your address.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tracking-info">
+                        <h3>Tracking Information</h3>
+                        <div class="row">
+                            <span>Courier</span>
+                            <span>PORTER</span>
+                        </div>
+                        <div class="row">
+                            <span>Tracking ID</span>
+                            <span>BD123456789</span>
+                        </div>
+                    </div>
+                    <div class="delivery-info">
+                        <h3>Delivery Details</h3>
+                        <p>Naresh</p>
+                        <p>123, ABC Street, Mumbai, Maharashtra - 400001</p>
+                        <p>Estimated Delivery: 25 Jul 2025</p>
+                    </div>
+                    <div class="payment-info">
+                        <h3>Payment Summary</h3>
+                        <div class="row">
+                            <span>Subtotal</span>
+                            <span class="amount">₹12,470</span>
+                        </div>
+                        <div class="row">
+                            <span>Discount</span>
+                            <span class="amount">-₹2,530</span>
+                        </div>
+                        <div class="row">
+                            <span>Shipping</span>
+                            <span class="amount">Free</span>
+                        </div>
+                        <div class="row">
+                            <span>Total</span>
+                            <span class="amount">₹9,940</span>
+                        </div>
+                        <div class="row">
+                            <span>Payment Method</span>
+                            <span>UPI</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <a href="#" class="action-btn" aria-label="Exchange Item">
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V7m0 13-4-4m4 4 4-4m4-12v13m0-13 4 4m-4-4-4 4"/>
+                            </svg>
+                            Exchange
+                        </a>
+                        <a href="#" class="action-btn" aria-label="Contact Support">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                                <path d="M4 22v-7"></path>
+                            </svg>
+                            Contact Support
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

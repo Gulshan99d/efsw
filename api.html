@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Shiprocket API Tester</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			.container {
+				display: flex;
+				gap: 20px;
+			}
+			.sidebar {
+				width: 250px;
+				background: #f4f4f4;
+				padding: 20px;
+				border-radius: 8px;
+			}
+			.sidebar button {
+				display: block;
+				width: 100%;
+				padding: 10px;
+				margin-bottom: 10px;
+				cursor: pointer;
+				border: none;
+				background: #007bff;
+				color: white;
+				border-radius: 4px;
+			}
+			.sidebar button:hover {
+				background: #0056b3;
+			}
+			.content {
+				flex: 1;
+				padding: 20px;
+				background: #fff;
+				border-radius: 8px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+			.response {
+				margin-top: 20px;
+				padding: 10px;
+				background: #f8f9fa;
+				border-radius: 4px;
+				max-height: 400px;
+				overflow-y: auto;
+			}
+			.response pre {
+				white-space: pre-wrap;
+				word-wrap: break-word;
+			}
+			.input-group {
+				margin-bottom: 15px;
+			}
+			.input-group label {
+				display: block;
+				margin-bottom: 5px;
+			}
+			.input-group input,
+			.input-group textarea {
+				width: 100%;
+				padding: 8px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+			}
+			h2 {
+				margin-top: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="sidebar">
+				<button onclick="showSection('getToken')">Get Token</button>
+				<button onclick="showSection('createOrder')">Create Order</button>
+				<button onclick="showSection('trackOrder')">Track Order</button>
+				<button onclick="showSection('getLabel')">Get Label</button>
+				<button onclick="showSection('getPickupLocations')">
+					Get Pickup Locations
+				</button>
+				<button onclick="clearLocalStorage()">Clear Local Storage</button>
+			</div>
+			<div class="content">
+				<div id="getToken" class="section">
+					<h2>Get Token</h2>
+					<div class="input-group">
+						<label>Email</label>
+						<input
+							type="text"
+							id="tokenEmail"
+							value="dartline0336766@gmail.com" />
+					</div>
+					<div class="input-group">
+						<label>Password</label>
+						<input
+							type="password"
+							id="tokenPassword"
+							value="VGUqAB$RBgsjuYiyNh" />
+					</div>
+					<button onclick="callGetToken()">Execute</button>
+					<div class="response" id="tokenResponse"></div>
+				</div>
+				<div id="createOrder" class="section" style="display: none">
+					<h2>Create Order</h2>
+					<div class="input-group">
+						<label>Order JSON</label>
+						<textarea id="orderData" rows="10">
+{
+    "order_id": "test_order_123",
+    "order_date": "2025-08-07",
+    "billing_customer_name": "Gulshan",
+    "billing_last_name": "Kumar",
+    "billing_address": "123 Test Street",
+    "billing_city": "New Delhi",
+    "billing_pincode": "110001",
+    "billing_state": "Delhi",
+    "billing_country": "India",
+    "billing_phone": "8837888628",
+    "order_items": [
+        {
+            "name": "Test Product",
+            "sku": "TP123",
+            "units": 1,
+            "selling_price": "500"
+        }
+    ],
+    "payment_method": "Prepaid",
+    "sub_total": "500",
+    "length": 10,
+    "breadth": 10,
+    "height": 10,
+    "weight": 0.5
+}
+                    </textarea
+						>
+					</div>
+					<button onclick="callCreateOrder()">Execute</button>
+					<div class="response" id="orderResponse"></div>
+				</div>
+				<div id="trackOrder" class="section" style="display: none">
+					<h2>Track Order</h2>
+					<div class="input-group">
+						<label>AWB Code</label>
+						<input type="text" id="awbCode" />
+					</div>
+					<button onclick="callTrackOrder()">Execute</button>
+					<div class="response" id="trackResponse"></div>
+				</div>
+				<div id="getLabel" class="section" style="display: none">
+					<h2>Get Label</h2>
+					<div class="input-group">
+						<label>Shipment ID</label>
+						<input type="text" id="shipmentId" />
+					</div>
+					<button onclick="callGetLabel()">Execute</button>
+					<div class="response" id="labelResponse"></div>
+				</div>
+				<div id="getPickupLocations" class="section" style="display: none">
+					<h2>Get Pickup Locations</h2>
+					<button onclick="callGetPickupLocations()">Execute</button>
+					<div class="response" id="pickupResponse"></div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// API Functions
+			document.getElementById('tokenEmail').value = 'dartline033@gmail.com';
+			document.getElementById('tokenPassword').value = 'VGUqAB$RB&54iyNh';
+			async function getToken() {
+				const email = document.getElementById('tokenEmail').value;
+				const password = document.getElementById('tokenPassword').value;
+				const res = await fetch(
+					'https://apiv2.shiprocket.in/v1/external/auth/login',
+					{
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ email, password }),
+					}
+				);
+				const data = await res.json();
+				localStorage.setItem('tokenResponse', JSON.stringify(data, null, 2));
+				document.getElementById(
+					'tokenResponse'
+				).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+				return data.token;
+			}
+
+			async function createOrder(token) {
+				const orderData = JSON.parse(
+					document.getElementById('orderData').value
+				);
+				const res = await fetch(
+					'https://apiv2.shiprocket.in/v1/external/orders/create/adhoc',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${token}`,
+						},
+						body: JSON.stringify(orderData),
+					}
+				);
+				const data = await res.json();
+				localStorage.setItem('orderResponse', JSON.stringify(data, null, 2));
+				document.getElementById(
+					'orderResponse'
+				).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+				return data;
+			}
+
+			async function trackOrder(token, awbCode) {
+				const res = await fetch(
+					`https://apiv2.shiprocket.in/v1/external/courier/track/awb/${awbCode}`,
+					{
+						method: 'GET',
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
+				const data = await res.json();
+				localStorage.setItem('trackResponse', JSON.stringify(data, null, 2));
+				document.getElementById(
+					'trackResponse'
+				).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+				return data;
+			}
+
+			async function getLabel(token, shipmentId) {
+				const res = await fetch(
+					'https://apiv2.shiprocket.in/v1/external/courier/generate/label',
+					{
+						method: 'POST',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ shipment_id: [shipmentId] }),
+					}
+				);
+				const data = await res.json();
+				localStorage.setItem('labelResponse', JSON.stringify(data, null, 2));
+				document.getElementById(
+					'labelResponse'
+				).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+				return data.pdf_url;
+			}
+
+			async function getPickupLocations(token) {
+				const res = await fetch(
+					'https://apiv2.shiprocket.in/v1/external/settings/company/pickup',
+					{
+						method: 'GET',
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
+				const data = await res.json();
+				localStorage.setItem('pickupResponse', JSON.stringify(data, null, 2));
+				document.getElementById(
+					'pickupResponse'
+				).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+				return data;
+			}
+
+			// UI Functions
+			function showSection(sectionId) {
+				document.querySelectorAll('.section').forEach(section => {
+					section.style.display = section.id === sectionId ? 'block' : 'none';
+				});
+			}
+
+			async function callGetToken() {
+				try {
+					const token = await getToken();
+					localStorage.setItem('token', token);
+				} catch (error) {
+					document.getElementById(
+						'tokenResponse'
+					).innerHTML = `<pre>Error: ${error.message}</pre>`;
+				}
+			}
+
+			async function callCreateOrder() {
+				try {
+					const token = localStorage.getItem('token');
+					if (!token)
+						throw new Error('No token found. Please get token first.');
+					await createOrder(token);
+				} catch (error) {
+					document.getElementById(
+						'orderResponse'
+					).innerHTML = `<pre>Error: ${error.message}</pre>`;
+				}
+			}
+
+			async function callTrackOrder() {
+				try {
+					const token = localStorage.getItem('token');
+					const awbCode = document.getElementById('awbCode').value;
+					if (!token)
+						throw new Error('No token found. Please get token first.');
+					if (!awbCode) throw new Error('Please enter AWB code.');
+					await trackOrder(token, awbCode);
+				} catch (error) {
+					document.getElementById(
+						'trackResponse'
+					).innerHTML = `<pre>Error: ${error.message}</pre>`;
+				}
+			}
+
+			async function callGetLabel() {
+				try {
+					const token = localStorage.getItem('token');
+					const shipmentId = document.getElementById('shipmentId').value;
+					if (!token)
+						throw new Error('No token found. Please get token first.');
+					if (!shipmentId) throw new Error('Please enter Shipment ID.');
+					await getLabel(token, shipmentId);
+				} catch (error) {
+					document.getElementById(
+						'labelResponse'
+					).innerHTML = `<pre>Error: ${error.message}</pre>`;
+				}
+			}
+
+			async function callGetPickupLocations() {
+				try {
+					const token = localStorage.getItem('token');
+					if (!token)
+						throw new Error('No token found. Please get token first.');
+					await getPickupLocations(token);
+				} catch (error) {
+					document.getElementById(
+						'pickupResponse'
+					).innerHTML = `<pre>Error: ${error.message}</pre>`;
+				}
+			}
+
+			function clearLocalStorage() {
+				localStorage.clear();
+				document.querySelectorAll('.response').forEach(response => {
+					response.innerHTML = '';
+				});
+				alert('Local storage cleared.');
+			}
+
+			// Load stored responses on page load
+			window.onload = () => {
+				const responses = [
+					'tokenResponse',
+					'orderResponse',
+					'trackResponse',
+					'labelResponse',
+					'pickupResponse',
+				];
+				responses.forEach(id => {
+					const stored = localStorage.getItem(id);
+					if (stored) {
+						document.getElementById(id).innerHTML = `<pre>${stored}</pre>`;
+					}
+				});
+			};
+		</script>
+	</body>
+</html>
