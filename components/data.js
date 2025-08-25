@@ -2,18 +2,127 @@ export const data = {
 	categories: [
 		{
 			_id: '64f1b2c4e2d3a9b7f1234561',
-			name: 'Mens',
-			subcategories: ['shirts', 'T-shirts', 'Smart Watches', 'glases'],
+			name: 'Men Accessories',
+			image: 'https://picsum.photos/seed/cat1/150',
+			subcategories: [
+				{
+					name: 'Watches',
+					image: 'https://picsum.photos/seed/sub1/150',
+				},
+				{
+					name: 'Wallets',
+					image: 'https://picsum.photos/seed/sub2/150',
+				},
+				{
+					name: 'Belts',
+					image: 'https://picsum.photos/seed/sub3/150',
+				},
+				{
+					name: 'Sunglasses',
+					image: 'https://picsum.photos/seed/sub4/150',
+				}, // Maps to Stylish Men’s Glasses
+				{
+					name: 'Perfumes',
+					image: 'https://picsum.photos/seed/sub5/150',
+				},
+				{
+					name: 'Cap',
+					image: 'https://picsum.photos/seed/sub6/150',
+				}, // Maps to Kid's Cotton Cap
+			],
 		},
 		{
 			_id: '64f1b2c4e2d3a9b7f1234562',
-			name: 'Womens',
-			subcategories: ['saari', 'suits', 'Footwear', 'Accessories'],
+			name: "Men's Clothes",
+			image: 'https://picsum.photos/seed/cat2/150',
+			subcategories: [
+				{
+					name: 'Shirts',
+					image: 'https://picsum.photos/seed/sub7/150',
+				}, // Maps to Men's Cotton Shirt
+				{
+					name: 'Pant',
+					image: 'https://picsum.photos/seed/sub8/150',
+				},
+				{
+					name: 'Kurtas',
+					image: 'https://picsum.photos/seed/sub9/150',
+				},
+				{
+					name: 'Jackets',
+					image: 'https://picsum.photos/seed/sub10/150',
+				},
+				{
+					name: 'T-Shirts',
+					image: 'https://picsum.photos/seed/sub11/150',
+				},
+				{
+					name: 'Suits',
+					image: 'https://picsum.photos/seed/sub12/150',
+				}, // Maps to Formal Women’s Suit (assumed typo)
+			],
 		},
 		{
 			_id: '64f1b2c4e2d3a9b7f1234563',
-			name: 'Kids',
-			subcategories: ['caps', 'toys', 'shirts', 'skirts'],
+			name: "Kids' Clothes",
+			image: 'https://picsum.photos/seed/cat3/150',
+			subcategories: [
+				{
+					name: "Boys' Clothing",
+					image: 'https://picsum.photos/seed/sub13/150',
+				}, // Maps to Kids Printed Shirt
+				{
+					name: "Girls' Clothing",
+					image: 'https://picsum.photos/seed/sub14/150',
+				}, // Maps to Girls Fancy Skirt
+				{
+					name: 'Baby Clothing',
+					image: 'https://picsum.photos/seed/sub15/150',
+				},
+				{
+					name: "Kids' Accessories",
+					image: 'https://picsum.photos/seed/sub16/150',
+				}, // Maps to Soft Toys for Kids
+				{
+					name: 'School Uniforms',
+					image: 'https://picsum.photos/seed/sub17/150',
+				},
+				{
+					name: "Kids' Jackets",
+					image: 'https://picsum.photos/seed/sub18/150',
+				},
+			],
+		},
+		{
+			_id: '64f1b2c4e2d3a9b7f1234564',
+			name: "Women's Clothes",
+			image: 'https://picsum.photos/seed/cat4/150',
+			subcategories: [
+				{
+					name: 'Lehenga',
+					image: 'https://picsum.photos/seed/sub19/150',
+				},
+				{
+					name: 'Kurti',
+					image: 'https://picsum.photos/seed/sub20/150',
+				},
+				{
+					name: 'Saree',
+					image: 'https://picsum.photos/seed/sub21/150',
+				}, // Maps to Designer Women’s Saari
+				{
+					name: 'Anarkali',
+					image: 'https://picsum.photos/seed/sub22/150',
+				},
+				{
+					name: 'Western Dresses',
+					image: 'https://picsum.photos/seed/sub23/150',
+				},
+				{
+					name: 'Blouses',
+					image: 'https://picsum.photos/seed/sub24/150',
+				}, // Maps to Women’s Fancy Footwear
+			],
 		},
 	],
 	products: [
@@ -43,8 +152,8 @@ export const data = {
         <li>Wear sneakers</li>
       </ol>
     `,
-			category: 'Mens',
-			subcategory: 'shirts',
+			category: "Men's Clothes",
+			subcategory: 'Shirts',
 			tag: 'New Arrival',
 			oldPrice: '999',
 			currentPrice: '749',
@@ -75,8 +184,8 @@ export const data = {
         <li>1x User Manual</li>
       </ol>
     `,
-			category: 'Mens',
-			subcategory: 'Smart Watches',
+			category: 'Men Accessories',
+			subcategory: 'Watches',
 			tag: 'Featured',
 			oldPrice: '2999',
 			currentPrice: '2499',
@@ -106,8 +215,8 @@ export const data = {
         <li>Free case included</li>
       </ol>
     `,
-			category: 'Mens',
-			subcategory: 'glases',
+			category: 'Men Accessories',
+			subcategory: 'Sunglasses',
 			tag: 'Popular',
 			oldPrice: '699',
 			currentPrice: '499',
@@ -136,8 +245,8 @@ export const data = {
         <tr><th>Length</th><td>6.3m</td></tr>
       </table>
     `,
-			category: 'Womens',
-			subcategory: 'saari',
+			category: "Women's Clothes",
+			subcategory: 'Saree',
 			tag: 'New Arrival',
 			oldPrice: '2999',
 			currentPrice: '2299',
@@ -162,8 +271,8 @@ export const data = {
         <li>Wrinkle-resistant</li>
       </ul>
     `,
-			category: 'Womens',
-			subcategory: 'suits',
+			category: "Women's Clothes",
+			subcategory: 'Suits',
 			tag: 'Featured',
 			oldPrice: '2499',
 			currentPrice: '1799',
@@ -192,8 +301,8 @@ export const data = {
         <li>XL</li>
       </ol>
     `,
-			category: 'Womens',
-			subcategory: 'Footwear',
+			category: "Women's Clothes",
+			subcategory: 'Blouses',
 			tag: 'Popular',
 			oldPrice: '1499',
 			currentPrice: '1199',
@@ -217,8 +326,8 @@ export const data = {
         <li>Soft inner lining</li>
       </ul>
     `,
-			category: 'Kids',
-			subcategory: 'caps',
+			category: "Kids' Clothes",
+			subcategory: "Kids' Accessories",
 			tag: 'None',
 			oldPrice: '399',
 			currentPrice: '299',
@@ -241,8 +350,8 @@ export const data = {
         <li>Perfect gift for toddlers</li>
       </ul>
     `,
-			category: 'Kids',
-			subcategory: 'toys',
+			category: "Kids' Clothes",
+			subcategory: "Kids' Accessories",
 			tag: 'Featured',
 			oldPrice: '499',
 			currentPrice: '349',
@@ -265,8 +374,8 @@ export const data = {
         <li>Colorful cartoon prints</li>
       </ul>
     `,
-			category: 'Kids',
-			subcategory: 'shirts',
+			category: "Kids' Clothes",
+			subcategory: "Boys' Clothing",
 			tag: 'New Arrival',
 			oldPrice: '699',
 			currentPrice: '499',
@@ -290,8 +399,8 @@ export const data = {
         <li><i>Soft cotton lining</i></li>
       </ul>
     `,
-			category: 'Kids',
-			subcategory: 'skirts',
+			category: "Kids' Clothes",
+			subcategory: "Girls' Clothing",
 			tag: 'Popular',
 			oldPrice: '899',
 			currentPrice: '649',
@@ -346,3 +455,4 @@ export const data = {
 		updatedAt: new Date('2025-08-03T10:59:00.000Z'),
 	},
 };
+

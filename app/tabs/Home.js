@@ -13,7 +13,6 @@ import {
 import * as SecureStore from 'expo-secure-store';
 import Svg, { Path, Line, Rect, Circle } from 'react-native-svg';
 import useData from '../../hooks/useData';
-import BottomNav from '../../components/BottomNav';
 import { useIsLoggedIn } from '../../hooks/useLoggedIn';
 import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -188,7 +187,6 @@ const App = () => {
 					keyExtractor={item => item.key}
 					contentContainerStyle={styles.main}
 				/>
-				<BottomNav />
 			</View>
 		</SafeAreaView>
 	);
